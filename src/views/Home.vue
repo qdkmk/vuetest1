@@ -1,6 +1,6 @@
 <template>
 <div class="home">
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+
   <p>{{msg}}</p>
   <div class="columns medium-3" v-for="refqa in refqas">
     <div class="card">
@@ -30,7 +30,7 @@ export default {
   },
 
   mounted() {
-    axios.get("http://localhost:8000/?keyword='読書'")
+    axios.get("http://192.168.1.12:8000/?keyword='読書'")
       .then(response => {
         const oParser = new DOMParser();
         const oDOM = oParser.parseFromString(response.data, "application/xml");
