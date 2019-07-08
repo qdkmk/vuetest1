@@ -61,11 +61,21 @@ export default {
         const oParser = new DOMParser();
         const oDOM = oParser.parseFromString(response.data, "application/xml");
         const results = oDOM.getElementsByTagName('result');
+
+
+        let ansprocElm = oDOM.createElement("ans-proc");
+        ansprocElm.innerHTML=("not found");
+        let preresElm = oDOM.createElement("pre-res");
+        preresElm.innerHTML=("not found");
+
+
+
         for (const result of results) {
           const question = result.getElementsByTagName("reference")[0].getElementsByTagName("question")[0];
           const answer = result.getElementsByTagName("reference")[0].getElementsByTagName("answer")[0];
-          const ansproc = result.getElementsByTagName("reference")[0].getElementsByTagName("ans-proc")[0];
-          const preres = result.getElementsByTagName("reference")[0].getElementsByTagName("pre-res")[0];
+          const ansproc = result.getElementsByTagName("reference")[0].getElementsByTagName("ans-proc")[0] || ansprocElm;
+          console.log(ansproc);
+          const preres = result.getElementsByTagName("reference")[0].getElementsByTagName("pre-res")[0] || preresElm;
           const url = result.getElementsByTagName("reference")[0].getElementsByTagName("url")[0];
 
 
@@ -73,7 +83,7 @@ export default {
           const obj = {
             question: question.innerHTML.replace(/\n/g, "<BR>") + '\n',
             answer: answer.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            ansproc: ansproc.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            ansproc:ansproc.innerHTML.replace(/\n/g, "<BR>")  + '\n',
             preres: preres.innerHTML.replace(/\n/g, "<BR>") + '\n',
 
             url: url.innerHTML.replace(/\n/g, "<BR>") + '\n',
