@@ -97,6 +97,9 @@ export default {
 </script>
 
 <style>
+
+
+
 .article-detail-container {
   position: relative;
   width: 100%;
@@ -142,5 +145,16 @@ export default {
 .nav li {
   font-size: 25px;
   list-style: none;
+}
+@media screen and (max-width: 768px){
+  .nav{
+  display: none;
+  }
+  .article-detail-container {
+    padding: 10px;
+  }
+  .article-detail {
+    width: 100%;
+}
 }
 </style>
