@@ -56,7 +56,8 @@ export default {
   },
 
   mounted() {
-    axios.get("http://192.168.1.12:8000/detail?sysid=" + this.$route.params.sysid)
+    //axios.get("http://192.168.1.12:8000/detail?sysid=" + this.$route.params.sysid)
+    axios.get("https://falmy.herokuapp.com/detail?sysid=" + this.$route.params.sysid)
       .then(response => {
         const oParser = new DOMParser();
         const oDOM = oParser.parseFromString(response.data, "application/xml");
