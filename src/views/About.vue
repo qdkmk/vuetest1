@@ -1,7 +1,10 @@
 <template>
 <div class="about">
-  <h1>This is an about page</h1>
-  <h2>この記事のシステムIDは{{$route.params.sysid}}です。</h2>
+  <div class="tweet">
+    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a>
+    <sns />
+  </div>
+
   <div class="article-detail-container">
     <div class="nav">
       <h2>目次</h2>
@@ -22,7 +25,6 @@
           <li>元記事URL</li>
         </a>
       </ol>
-      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a>
     </div>
 
 
@@ -46,16 +48,25 @@
 
 
 <script>
+
+import sns from '../components/sns';
 // @ is an alias to /src
 
 
 export default {
+  components: {
+    sns,
+   },
   data() {
     return {
       refqas: []
     }
   },
-
+  created() {
+     let recaptchaScript = document.createElement('script')
+     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
+     document.head.appendChild(recaptchaScript)
+   },
   mounted() {
     //axios.get("http://192.168.1.12:8000/detail?sysid=" + this.$route.params.sysid)
     axios.get("https://falmy.herokuapp.com/detail?sysid=" + this.$route.params.sysid)
@@ -99,23 +110,24 @@ export default {
 </script>
 
 <style>
-
-
-
-.article-detail-container {
-  position: relative;
-  width: 100%;
-  padding: 30px;
-  display: flex;
+  .nav{
+  display: none;
+  }
+  .tweet{
+    margin: 30px auto 0;
+  }
+  .article-detail-container {
+    padding: 10px;
+    position: relative;
+    width: 100%;
+    display: flex;
+  }
+  .article-detail {
+    width: 100%;
+    display: block;
+    text-align: left;
+    padding: 15px;
 }
-
-.article-detail {
-  display: block;
-  width: 75%;
-  text-align: left;
-  padding: 15px;
-}
-
 .article-detail h3 {
   border-bottom: 1px solid #999999;
   color: #333;
@@ -123,17 +135,26 @@ export default {
   margin: 0 0 20px;
   padding: 15px 0 10px;
 }
+@media screen and (min-width: 768px){
+
+.article-detail-container {
+    padding: 30px;
+}
+
+.article-detail {
+    width: 75%;
+}
 
 .nav {
-  background-color: #ddd;
-  position: absolute;
-  display: block;
-  right:0;
-  top:0;
-  text-align: left;
-  width: 20%;
-  margin-right: 3%;
-  padding: 15px;
+display: block;
+background-color: #ddd;
+position: absolute;
+right:0;
+top:0;
+text-align: left;
+width: 20%;
+margin-right: 3%;
+padding: 15px;
 }
 .nav h2{
   font-size: 20px;
@@ -148,15 +169,6 @@ export default {
   font-size: 25px;
   list-style: none;
 }
-@media screen and (max-width: 768px){
-  .nav{
-  display: none;
-  }
-  .article-detail-container {
-    padding: 10px;
-  }
-  .article-detail {
-    width: 100%;
 }
-}
+
 </style>

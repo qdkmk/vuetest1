@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
+
       <!--
       <router-link to="/">Home</router-link> |
       <router-link :to="{ name: 'about', params: { sysid:'1000083444' }}" >About</router-link > |

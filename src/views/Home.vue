@@ -6,16 +6,14 @@
       <h1>レファ協<br>ランダム検索</h1>
     </div>
     <div class="toptitle">
-
-
     <img class="sp-top" src="/img/sp-top.png" /></li>
 
     <!--<p>{{ sharedState.message }}</p>-->
     <!--<button v-on:click="setMessageAction">setMessageAction</button>-->
 
-    <div class="description">
-      <p>レファレンス事例共同データベースからのキーワード簡易検索とランダム表示を行うサービスです。</p>
-    </div>
+      <div class="description">
+        <p>レファレンス事例共同データベースからのキーワード簡易検索とランダム表示を行うサービスです。</p>
+      </div>
     </div>
 <div class="topbox">
     <div>
@@ -26,7 +24,7 @@
     </div>
     <button  v-on:click="getrandom" class="random-button">ランダムに表示</button>
   </div>
-<div v-show="loading" class="loader" id="loading"></div>
+  <div v-show="loading" class="loader" id="loading"></div>
   </div>
 
 
@@ -46,7 +44,6 @@
     <button v-show="moreKeyword" v-on:click="getMoreKeyword" class="random-button more-button">もっと検索</button>
   </div>
 
-</div>
 </template>
 
 <script>
@@ -147,6 +144,7 @@ export default {
         })
     },
     getMoreKeyword: function(){
+
       const regdate = this.makeRandomDate();
       axios.get("https://falmy.herokuapp.com/more?keyword=" + this.keyword + "&" + "regdate=" + regdate)
         .then(response => {
@@ -320,7 +318,7 @@ margin-bottom: 15px;
   }
 
   .resultswrapper {
-    margin: 30px auto;
+    margin: 0px auto 0;
     flex-flow: wrap;
     width: 100%;
   }
