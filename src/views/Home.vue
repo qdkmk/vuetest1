@@ -24,6 +24,7 @@
       </div>
       <button v-on:click="getrandom" class="random-button">ランダムに表示</button>
     </div>
+      <button v-on:click="doClick">Show!</button>
     <div v-show="loading" class="loader" id="loading"></div>
   </div>
 
@@ -46,6 +47,7 @@
 <script>
 import _ from 'lodash';
 import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -70,6 +72,12 @@ export default {
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 5000);
   },
   methods: {
+    doClick:function(){
+      this.$toasted.show('hello billo',{
+        position: "bottom-center", 
+        duration : 5000
+      });
+    },
     moveNext: function() {
       document.activeElement.blur();
     },
