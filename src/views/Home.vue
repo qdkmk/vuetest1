@@ -10,9 +10,6 @@
     <div>
       <input type="text" id="searchbox" v-model="keyword" placeholder="キーワードを入力して検索">
     </div>
-    <p>or</p>
-
-    <button class="random-button" v-on:click="randomDate">ランダムに取得</button>
 
     <p v-cloak>
       {{ message }}
@@ -32,17 +29,32 @@
     </div>
   </div>
 
+<infinite-loading @infinite="infiniteHandler" :distance="10"></infinite-loading>
+
 </div>
 </template>
 
 <script>
+
+import InfiniteLoading from 'vue-infinite-loading';
+var todos = [];
+for(var i=0;i<100;i++){
+    todos.push({
+        text: "コンテンツ" + i, done: false
+    });
+}
 export default {
+  components: {
+  InfiniteLoading
+},
   data() {
     return {
       refqas: [],
       keyword: '',
       message: '',
       sharedState: this.$store.state,
+      todos:[],
+      page:0,
     }
 
   },
@@ -72,6 +84,7 @@ export default {
         const question = result.getElementsByTagName("reference")[0].getElementsByTagName("question")[0];
         const answer = result.getElementsByTagName("reference")[0].getElementsByTagName("answer")[0];
         const id = result.getElementsByTagName("reference")[0].getElementsByTagName("sys-id")[0];
+        //200文字以上のコンテンツは省略する。
         let dotquestion = "";
         let dotanswer = "";
         if(question.innerHTML.length > 200){dotquestion = "..."}
@@ -103,28 +116,39 @@ export default {
         this.message="";
     },
 
-    randomDate: function() {
+    makeRandomDate: function() {
       const start = new Date(2004, 3, 6);
       const end = new Date;
       const querydate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
       const m = ("00" + (querydate.getMonth() + 1)).slice(-2);
       const d = ("00" + querydate.getDate()).slice(-2);
       const regdate = querydate.getFullYear() + m + d;
+      return regdate;
+    },
 
-      this.refqas = [];
+      randomGet: function($state) {
+        const regdate = this.makeRandomDate();
       //axios.get("http://192.168.1.12:8000/random?regdate=" + regdate)
       axios.get("https://falmy.herokuapp.com/random?regdate=" + regdate)
         .then(response => {
           this.resisterContent(response);
+          if(response.data && this.refqas.length < 50){$state.loaded()}else{$state.complete()}
         })
-    }
+
+    },
+    infiniteHandler($state) {
+      this.randomGet($state);
+        },
+
   },
+  /*
   destroyed() {
     axios.get("https://falmy.herokuapp.com/?keyword='読書'")
       .then(response => {
         this.resisterContent(response);
       })
   }
+  */
 }
 </script>
 <style>
