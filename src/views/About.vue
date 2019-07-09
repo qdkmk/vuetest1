@@ -27,7 +27,7 @@
 
 
 
-    <div class="article-detail" v-for="refqa in refqas">
+    <div class="article-detail" v-for="(refqa,index) in refqas" v-bind:key='index'>
       <h3 id="question">質問</h3>
       <p v-html="refqa.question"></p>
       <h3 id="answer">回答</h3>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -78,7 +79,7 @@ export default {
           const question = result.getElementsByTagName("reference")[0].getElementsByTagName("question")[0];
           const answer = result.getElementsByTagName("reference")[0].getElementsByTagName("answer")[0];
           const ansproc = result.getElementsByTagName("reference")[0].getElementsByTagName("ans-proc")[0] || ansprocElm;
-          console.log(ansproc);
+
           const preres = result.getElementsByTagName("reference")[0].getElementsByTagName("pre-res")[0] || preresElm;
           const url = result.getElementsByTagName("reference")[0].getElementsByTagName("url")[0];
 

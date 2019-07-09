@@ -6,7 +6,7 @@
       <h1>レファ協<br>ランダム検索</h1>
     </div>
     <div class="toptitle">
-      <img class="sp-top" src="/img/sp-top.png" /></li>
+      <img class="sp-top" src="/img/sp-top.png" />
 
       <!--<p>{{ sharedState.message }}</p>-->
       <!--<button v-on:click="setMessageAction">setMessageAction</button>-->
@@ -28,7 +28,7 @@
   </div>
 
   <div v-show="!loading" class="resultswrapper" id="resultswrapper">
-    <div class="result" v-for="refqa in sharedState.message">
+    <div class="result" v-for="(refqa,index) in sharedState.message" v-bind:key='index'>
       <router-link :to="{ name: 'about', params: { sysid: refqa.id }}">
         <div class="result-question">
           <p v-html="refqa.question"></p>
@@ -45,6 +45,7 @@
 
 <script>
 import _ from 'lodash';
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -59,7 +60,7 @@ export default {
 
   },
   watch: {
-    keyword: function(newKeyword, oldKeyword) {
+    keyword: function() {
       // lodash.debounceを利用してAPI呼び出しの負荷軽減
       this.loading = true;
       this.debouncedGetAnswer();
