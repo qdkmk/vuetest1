@@ -6,30 +6,28 @@
       <h1>レファ協<br>ランダム検索</h1>
     </div>
     <div class="toptitle">
-    <img class="sp-top" src="/img/sp-top.png" /></li>
+      <img class="sp-top" src="/img/sp-top.png" /></li>
 
-    <!--<p>{{ sharedState.message }}</p>-->
-    <!--<button v-on:click="setMessageAction">setMessageAction</button>-->
+      <!--<p>{{ sharedState.message }}</p>-->
+      <!--<button v-on:click="setMessageAction">setMessageAction</button>-->
 
       <div class="description">
-        <p>レファレンス事例共同データベースからのキーワード簡易検索とランダム表示を行うサービスです。</p>
+        <p>レファレンス事例共同データベースからの簡易キーワード検索とランダム表示を行うサービスです。</p>
       </div>
     </div>
-<div class="topbox">
-    <div>
-      <input type="text" id="searchbox" v-model="keyword" placeholder="キーワード検索" @keydown.prevent.enter="moveNext">
+    <div class="topbox">
+      <div>
+        <input type="text" id="searchbox" v-model="keyword" placeholder="キーワード検索" @keydown.prevent.enter="moveNext">
+      </div>
+      <div class="or">
+        <p>or</p>
+      </div>
+      <button v-on:click="getrandom" class="random-button">ランダムに表示</button>
     </div>
-    <div class="or">
-      <p>or</p>
-    </div>
-    <button  v-on:click="getrandom" class="random-button">ランダムに表示</button>
-  </div>
-  <div v-show="loading" class="loader" id="loading"></div>
+    <div v-show="loading" class="loader" id="loading"></div>
   </div>
 
-
-
-<div v-show="!loading" class="resultswrapper" id="resultswrapper">
+  <div v-show="!loading" class="resultswrapper" id="resultswrapper">
     <div class="result" v-for="refqa in sharedState.message">
       <router-link :to="{ name: 'about', params: { sysid: refqa.id }}">
         <div class="result-question">
@@ -40,10 +38,9 @@
         </div>
       </router-link>
     </div>
-    </div>
-    <button v-show="moreKeyword" v-on:click="getMoreKeyword" class="random-button more-button">もっと検索</button>
   </div>
-
+  <button v-show="moreKeyword" v-on:click="getMoreKeyword" class="random-button more-button">もっと検索</button>
+</div>
 </template>
 
 <script>
@@ -57,7 +54,7 @@ export default {
       sharedState: this.$store.state,
       todos: [],
       loading: false,
-      moreKeyword:false,
+      moreKeyword: false,
     }
 
   },
@@ -120,7 +117,7 @@ export default {
         .then(response => {
           this.resisterContent(response);
         })
-        this.moreKeyword=true;
+      this.moreKeyword = true;
     },
 
     makeRandomDate: function() {
@@ -143,7 +140,7 @@ export default {
           this.resisterContent(response);
         })
     },
-    getMoreKeyword: function(){
+    getMoreKeyword: function() {
 
       const regdate = this.makeRandomDate();
       axios.get("https://falmy.herokuapp.com/more?keyword=" + this.keyword + "&" + "regdate=" + regdate)
@@ -170,9 +167,10 @@ export default {
 }
 </script>
 <style>
-.home{
+.home {
   background-color: #fff;
 }
+
 .home-top {
   background-color: #f78200;
   min-height: 100vh;
@@ -275,20 +273,22 @@ h1 {
 .result {
   width: 100%;
   margin-top: 15px;
-margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 @media screen and (min-width: 768px) {
-  .home-top{
+  .home-top {
     display: flex;
     flex-flow: wrap;
   }
-.toptitle{
-  display: block;
-  width: 50%;
-  padding: 30px;
-}
-  .topbox{
+
+  .toptitle {
+    display: block;
+    width: 50%;
+    padding: 30px;
+  }
+
+  .topbox {
     width: 50%;
 
   }
@@ -307,13 +307,15 @@ margin-bottom: 15px;
     margin: 40% auto 0;
     font-size: 3rem;
   }
+
   .random-button {
     margin: 10px auto;
     font-size: 3rem;
     padding: 1rem 1rem;
     width: 70%;
   }
-  .loader{
+
+  .loader {
     display: block;
   }
 
@@ -322,10 +324,12 @@ margin-bottom: 15px;
     flex-flow: wrap;
     width: 100%;
   }
+
   .result {
     width: 30%;
   }
-  .more-button{
+
+  .more-button {
     margin: 0 auto 30px;
     font-size: 2rem;
     width: 40%;
@@ -342,6 +346,7 @@ loader
   width: 10em;
   height: 10em;
 }
+
 .loader {
   margin: 60px auto;
   font-size: 10px;
@@ -357,28 +362,28 @@ loader
   -webkit-animation: load8 1.1s infinite linear;
   animation: load8 1.1s infinite linear;
 }
+
 @-webkit-keyframes load8 {
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
+
 @keyframes load8 {
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
-
-
-
-
 </style>
