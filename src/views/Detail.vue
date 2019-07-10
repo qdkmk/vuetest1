@@ -31,7 +31,7 @@
         <li>元記事URL</li>
       </a>
     </ol>
-    <div class="tweet-pc">
+    <div class="detail-tweet-pc">
       <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
     </div>
   </div>
@@ -202,7 +202,7 @@ export default {
     display: none;
   }
 
-  .tweet-pc {
+  .detail-tweet-pc {
     margin-top: 10px;
     text-align: left;
   }
@@ -255,7 +255,7 @@ export default {
   .nav li {
     padding: 5px 15px;
     font-size: 1.3rem;
-    line-height: 2.8rem;
+    line-height: 2rem;
     list-style: none;
   }
 }

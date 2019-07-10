@@ -8,6 +8,10 @@
     ],
     "rewrites": [
       {
+        "source": "ogpimg",
+        "destination": "https://testreftika.web.app/img/sns.png"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
