@@ -12,7 +12,7 @@
       <!--<button v-on:click="setMessageAction">setMessageAction</button>-->
 
       <div class="description">
-        <p>レファレンス事例共同データベースからの簡易キーワード検索とランダム表示を行うサービスです。</p>
+        <p>レファレンス協同データベースからの<br>『簡易キーワード検索』と『ランダムピックアップ表示機能』を提供する個人運営のサービスです。beta版のため、動作はちょっと重めです。</p>
       </div>
     </div>
     <div class="topbox">
@@ -24,13 +24,15 @@
       </div>
       <button v-on:click="getrandom" class="random-button">ランダムに表示</button>
     </div>
-      <button v-on:click="doClick">Show!</button>
+    <div class="tweet-pc">
+      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
+    </div>
     <div v-show="loading" class="loader" id="loading"></div>
   </div>
 
   <div v-show="!loading" class="resultswrapper" id="resultswrapper">
     <div class="result" v-for="(refqa,index) in sharedState.message" v-bind:key='index'>
-      <router-link :to="{ name: 'about', params: { sysid: refqa.id }}">
+      <router-link :to="{ name: 'detail', params: { sysid: refqa.id }}">
         <div class="result-question">
           <p v-html="refqa.question"></p>
         </div>
@@ -53,9 +55,7 @@ export default {
     return {
       refqas: [],
       keyword: '',
-      message: '',
       sharedState: this.$store.state,
-      todos: [],
       loading: false,
       moreKeyword: false,
     }
@@ -65,27 +65,33 @@ export default {
     keyword: function() {
       // lodash.debounceを利用してAPI呼び出しの負荷軽減
       this.loading = true;
+      this.moreKeyword = false;
       this.debouncedGetAnswer();
     }
   },
   created: function() {
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 5000);
+
+    let recaptchaScript = document.createElement('script')
+    recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
+    document.head.appendChild(recaptchaScript)
   },
   methods: {
     doClick:function(){
       this.$toasted.show('hello billo',{
-        position: "bottom-center", 
+        position: "bottom-center",
         duration : 5000
       });
     },
+    //検索ボックスからフォーカスを外す関数。スマホのソフトウェアキーボードを閉じるため。
     moveNext: function() {
       document.activeElement.blur();
     },
-
+    //resisterContentで処理したデータをstoreに登録する関数
     setMessageAction: function() {
       this.$store.commit("setMessageAction", this.refqas)
     },
-
+    //表示に反映するために、取得したレスポンスを処理する関数
     resisterContent: function(response) {
       const oParser = new DOMParser();
       const oDOM = oParser.parseFromString(response.data, "application/xml");
@@ -111,10 +117,9 @@ export default {
         this.refqas.push(obj)
       }
       this.$store.commit("setMessageAction", this.refqas)
-      this.message = '';
       this.loading = false;
     },
-
+    //キーワード検索用関数
     getAnswer: function() {
       if (this.keyword === '') {
         this.loading = false;
@@ -126,19 +131,28 @@ export default {
         .then(response => {
           this.resisterContent(response);
         })
-      this.moreKeyword = true;
+        .catch(error => {
+          console.log(error)
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+            position: "bottom-center",
+            duration : 5000
+          });
+        })
+        .finally(() => {
+          this.moreKeyword = true;
+          })
     },
-
+    //2004/3/6～現在までの間のランダムな日付を生成。2004/3/6はデータ登録日の最古と思われる日付。
     makeRandomDate: function() {
       const start = new Date(2004, 3, 6);
       const end = new Date;
       const querydate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-      const m = ("00" + (querydate.getMonth() + 1)).slice(-2);
-      const d = ("00" + querydate.getDate()).slice(-2);
-      const regdate = querydate.getFullYear() + m + d;
+      const month = ("00" + (querydate.getMonth() + 1)).slice(-2);
+      const date = ("00" + querydate.getDate()).slice(-2);
+      const regdate = querydate.getFullYear() + month + date;
       return regdate;
     },
-
+    //ランダム取得用関数
     getrandom: function() {
       this.loading = true;
       this.refqas = [];
@@ -148,13 +162,27 @@ export default {
         .then(response => {
           this.resisterContent(response);
         })
+        .catch(error => {
+          console.log(error)
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+            position: "bottom-center",
+            duration : 5000
+          });
+        })
     },
+    //もっとキーワード検索用関数
     getMoreKeyword: function() {
-
       const regdate = this.makeRandomDate();
       axios.get("https://falmy.herokuapp.com/more?keyword=" + this.keyword + "&" + "regdate=" + regdate)
         .then(response => {
           this.resisterContent(response);
+        })
+        .catch(error => {
+          console.log(error)
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+            position: "bottom-center",
+            duration : 5000
+          });
         })
     },
   },
@@ -182,7 +210,7 @@ export default {
 
 .home-top {
   background-color: #f78200;
-  min-height: 100vh;
+  min-height: 95vh;
   padding: 30px;
 
   text-align: center;
@@ -226,31 +254,28 @@ h1 {
   margin: 10px auto;
   display: inline-block;
   background-color: #f78200;
-  /*背景色*/
   color: #fff;
-  /*文字色*/
   font-size: 1.5rem;
-  /*文字サイズ*/
   line-height: 1;
   text-decoration: none;
   letter-spacing: 0.05rem;
-  /*字間*/
   padding: 0.5rem 1rem;
-  /*ボタン内の余白*/
   border-radius: 3px;
-
-  /*角の丸み*/
   cursor: pointer;
   box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-  /*影*/
   -webkit-tap-highlight-color: transparent;
   transition: .3s ease-out;
-  /*変化を緩やかに*/
+}
+.or{
+  font-size: 1.2rem;
+  line-height: 1.3rem;
+}
+.tweet-pc{
+  margin:15px auto 0;
 }
 
 .result-question,
 .result-answer {
-
   padding: 20px;
   color: #000;
   text-align: left;
@@ -283,6 +308,7 @@ h1 {
   width: 100%;
   margin-top: 15px;
   margin-bottom: 15px;
+  filter: drop-shadow(3px 3px 5px rgba(0,0,0,.3));
 }
 
 @media screen and (min-width: 768px) {
@@ -295,10 +321,12 @@ h1 {
     display: block;
     width: 50%;
     padding: 30px;
+    margin: auto;
   }
 
   .topbox {
     width: 50%;
+    margin: auto;
 
   }
 
@@ -313,7 +341,7 @@ h1 {
   #searchbox {
     height: 100px;
     width: 70%;
-    margin: 40% auto 0;
+    margin: auto;
     font-size: 3rem;
   }
 
@@ -323,7 +351,15 @@ h1 {
     padding: 1rem 1rem;
     width: 70%;
   }
-
+  .or{
+    font-size: 2rem;
+  }
+.tweet-pc{
+  z-index: 100;
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+}
   .loader {
     display: block;
   }

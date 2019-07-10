@@ -1,5 +1,5 @@
 <template>
-<div class="about">
+<div class="detail">
   <div class="nav">
     <h2>目次</h2>
     <ol>
@@ -14,6 +14,18 @@
       </a>
       <a href="#preres">
         <li>事前調査事項</li>
+      </a>
+      <a href="#bibldesc">
+        <li>参考資料</li>
+      </a>
+      <a href="#libname">
+        <li>提供館</li>
+      </a>
+      <a href="#restype">
+        <li>調査種別</li>
+      </a>
+      <a href="#crtdate">
+        <li>事例作成日</li>
       </a>
       <a href="#originalurl">
         <li>元記事URL</li>
@@ -36,8 +48,16 @@
       <p v-html="refqa.ansproc"></p>
       <h3 id="preres">事前調査事項</h3>
       <p v-html="refqa.preres"></p>
+      <h3 id="bibldesc">参考資料</h3>
+      <p v-html="refqa.bibldesc"></p>
+      <h3 id="libname">提供館</h3>
+      <p v-html="refqa.libname"></p>
+      <h3 id="restype">調査種別</h3>
+      <p v-html="refqa.restype"></p>
+      <h3 id="crtdate">事例作成日</h3>
+      <p v-html="refqa.crtdate"></p>
       <h3 id="originalurl">元記事URL</h3>
-      <p v-html="refqa.url"></p>
+      <a v-bind:href="refqa.url"><p v-html="refqa.url"></p></a>
     </div>
   </div>
   <div class="tweet-sp">
@@ -69,18 +89,31 @@ export default {
         const oParser = new DOMParser();
         const oDOM = oParser.parseFromString(response.data, "application/xml");
         const results = oDOM.getElementsByTagName('result');
-
+        //データがない場合もある項目のエスケープ用
         let ansprocElm = oDOM.createElement("ans-proc");
         ansprocElm.innerHTML = ("not found");
         let preresElm = oDOM.createElement("pre-res");
         preresElm.innerHTML = ("not found");
+        let bibldescElm = oDOM.createElement("bibl-desc");
+        bibldescElm.innerHTML = ("not found");
+        let libnameElm = oDOM.createElement("lib-name");
+        libnameElm.innerHTML = ("not found");
+        let restypeElm = oDOM.createElement("res-type");
+        restypeElm.innerHTML = ("not found");
+        let crtdateElm = oDOM.createElement("crt-date");
+        crtdateElm.innerHTML = ("00000000");
+
 
         for (const result of results) {
           const question = result.getElementsByTagName("reference")[0].getElementsByTagName("question")[0];
           const answer = result.getElementsByTagName("reference")[0].getElementsByTagName("answer")[0];
           const ansproc = result.getElementsByTagName("reference")[0].getElementsByTagName("ans-proc")[0] || ansprocElm;
-
           const preres = result.getElementsByTagName("reference")[0].getElementsByTagName("pre-res")[0] || preresElm;
+          const bibldesc = result.getElementsByTagName("reference")[0].getElementsByTagName("bibl-desc")[0] || bibldescElm;
+          const libname = result.getElementsByTagName("reference")[0].getElementsByTagName("lib-name")[0] || libnameElm;
+          const restype = result.getElementsByTagName("reference")[0].getElementsByTagName("res-type")[0] || restypeElm;
+          const crtdate = result.getElementsByTagName("reference")[0].getElementsByTagName("crt-date")[0] || crtdateElm;
+
           const url = result.getElementsByTagName("reference")[0].getElementsByTagName("url")[0];
 
           const obj = {
@@ -88,13 +121,26 @@ export default {
             answer: answer.innerHTML.replace(/\n/g, "<BR>") + '\n',
             ansproc: ansproc.innerHTML.replace(/\n/g, "<BR>") + '\n',
             preres: preres.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            url: url.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            bibldesc: bibldesc.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            libname: libname.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            restype: restype.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            crtdate: crtdate.innerHTML.slice(0,4) + "/" +  crtdate.innerHTML.slice(4,6) + "/" +  crtdate.innerHTML.slice(6) + '\n',
+            url: url.innerHTML.replace(/&amp;/g, '&') + '\n',
           };
           this.refqas.push(obj)
         }
       })
+      .catch(error => {
+        console.log(error)
+        this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+          position: "bottom-center",
+          duration : 5000
+        });
+      })
+
   }
-}
+  }
+
 </script>
 
 <style>
@@ -105,7 +151,7 @@ export default {
 
 .tweet-sp {
   text-align: left;
-  margin: 0 auto 15px 30px;
+  margin: 0 auto 15px 25px;
 }
 
 .article-detail-container {
@@ -145,15 +191,20 @@ export default {
   width: 50px;
   z-index: 80;
 }
-
+.article-detail a{
+  color: #000;
+}
+.article-detail a:hover{
+  opacity: 0.7;
+}
 @media screen and (min-width: 768px) {
   .tweet-sp {
     display: none;
   }
 
   .tweet-pc {
-    margin-top: 15px;
-    text-align: right;
+    margin-top: 10px;
+    text-align: left;
   }
 
   .article-detail-container {
@@ -180,6 +231,7 @@ export default {
     font-size: 1rem;
     border-bottom: 1px solid #999999;
     color: #333;
+    margin-top: 0px;
   }
 
   .nav a {
@@ -201,9 +253,9 @@ export default {
   }
 
   .nav li {
-    padding: 10px 15px;
+    padding: 5px 15px;
     font-size: 1.3rem;
-    line-height: 3rem;
+    line-height: 2.8rem;
     list-style: none;
   }
 }

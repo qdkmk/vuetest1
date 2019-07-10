@@ -1,9 +1,11 @@
 <template>
 <div id="app">
   <div id="nav">
-    <a href="#">About Me</a>
-    <span>|</span>
-    <a href="#">このwebアプリについて</a>
+    <a class="nav-top" href="https://testreftika.web.app/">Top</a>
+    <span class="nav-span">|</span>
+    <router-link class="nav-service" :to="{ name: 'aboutservice'}">
+      <span>このwebアプリについて</span>
+    </router-link>
   </div>
   <router-view />
   <div class="footer">
@@ -35,7 +37,6 @@ a {
 #nav {
   z-index: 99;
   position: relative;
-  padding: 10px;
   display: flex;
   justify-content: space-around;
   background-color: #333;
@@ -47,7 +48,25 @@ a {
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #fff;
+}
+.nav-top,
+.nav-service{
+  padding: 10px;
+}
+.nav-top:hover,
+.nav-service:hover{
+  opacity: 0.8;
+}
+.nav-top{
+  display: block;
+  width: 35%;
+}
+.nav-service{
+  width: 65%;
+}
+.nav-span{
+  padding: 10px;
 }
 
 .footer {
