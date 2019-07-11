@@ -70,7 +70,7 @@ export default {
     }
   },
   created: function() {
-    this.debouncedGetAnswer = _.debounce(this.getAnswer, 5000);
+    this.debouncedGetAnswer = _.debounce(this.getAnswer, 3000);
 
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
@@ -79,8 +79,8 @@ export default {
   methods: {
     doClick:function(){
       this.$toasted.show('hello billo',{
-        position: "bottom-center",
-        duration : 5000
+        position: "top-center",
+        duration : 10000
       });
     },
     //検索ボックスからフォーカスを外す関数。スマホのソフトウェアキーボードを閉じるため。
@@ -133,12 +133,12 @@ export default {
         })
         .catch(error => {
           this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
-            position: "bottom-center",
-            duration : 5000
+            position: "top-center",
+            duration : 10000
           });
         })
         .finally(() => {
-          this.moreKeyword = true;
+          this.loading = false;
           })
     },
     //2004/3/6～現在までの間のランダムな日付を生成。2004/3/6はデータ登録日の最古と思われる日付。
@@ -163,10 +163,13 @@ export default {
         })
         .catch(error => {
           this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
-            position: "bottom-center",
-            duration : 5000
+            position: "top-center",
+            duration : 10000
           });
         })
+        .finally(() => {
+          this.loading = false;
+          })
     },
     //もっとキーワード検索用関数
     getMoreKeyword: function() {
@@ -177,9 +180,12 @@ export default {
         })
         .catch(error => {
           this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
-            position: "bottom-center",
-            duration : 5000
+            position: "top-center",
+            duration : 10000
           });
+        })
+        .finally(() => {
+          this.loading = false;
         })
     },
   },

@@ -131,10 +131,9 @@ export default {
         }
       })
       .catch(error => {
-        console.log(error)
         this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
-          position: "bottom-center",
-          duration : 5000
+          position: "top-center",
+          duration : 10000
         });
       })
 
