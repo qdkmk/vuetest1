@@ -247,7 +247,7 @@ export default {
   overflow-y: hidden;
   cursor: pointer;
   margin-top: 45px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   width: 100%;
 }
 
@@ -401,7 +401,6 @@ h1 {
   display: flex;
   flex-flow: column;
   justify-content: space-around;
-
 }
 
 .result {
@@ -427,6 +426,7 @@ h1 {
   .topbox {
     width: 50%;
     margin: auto;
+    padding-top: 100px;
 
   }
 
@@ -439,8 +439,9 @@ h1 {
   }
 .exampletexts{
   margin: auto;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   width: 70%;
+
 }
   #searchbox {
     margin-top: 30px;
