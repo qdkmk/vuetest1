@@ -16,6 +16,19 @@
       </div>
     </div>
     <div class="topbox">
+      <p class="exampletexts">
+        <span v-on:click="setInputBox('モチモチ')">モチモチの木のアクセントは？</span>
+        <span v-on:click="setInputBox('江戸時代　米　値段')">江戸時代の米の値段は？</span>
+        <span v-on:click="setInputBox('おいしい　カニ')">おいしいカニの見分け方</span>
+        <span v-on:click="setInputBox('最後　仇討ち')">最後に仇討ちをした人は誰？</span>
+        <span v-on:click="setInputBox('大仏　ぶつぶつ')">奈良の大仏さまの頭のぶつぶつはいくつ？</span>
+        <span v-on:click="setInputBox('手話　誰が')">手話は誰が作ったの？</span>
+        <span v-on:click="setInputBox('蛍 すぐ死ぬ')">蛍はなぜすぐ死んでしまうのか</span>
+        <span v-on:click="setInputBox('トナカイ　名前')">サンタクロースのトナカイの名前は？</span>
+        <span v-on:click="setInputBox('歳 おすすめ　絵本')">○歳の子どもにお勧めの絵本は？</span>
+        <span v-on:click="setInputBox('市場動向')">○○の市場動向を調べたい！</span>
+      </p>
+
       <div>
         <input type="text" id="searchbox" v-model="keyword" placeholder="キーワード検索" @keydown.prevent.enter="moveNext">
       </div>
@@ -58,6 +71,7 @@ export default {
       sharedState: this.$store.state,
       loading: false,
       moreKeyword: false,
+      show:false,
     }
 
   },
@@ -77,6 +91,10 @@ export default {
     document.head.appendChild(recaptchaScript)
   },
   methods: {
+    setInputBox(searchtext){
+      document.getElementById( "searchbox" ).value = searchtext;
+      this.keyword=searchtext;
+    },
     doClick:function(){
       this.$toasted.show('hello billo',{
         position: "top-center",
@@ -130,6 +148,7 @@ export default {
       axios.get("https://falmy.herokuapp.com/?keyword=" + this.keyword)
         .then(response => {
           this.resisterContent(response);
+          this.moreKeyword = true;
         })
         .catch(error => {
           this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
@@ -155,17 +174,20 @@ export default {
     getrandom: function() {
       this.loading = true;
       this.refqas = [];
+      this.keyword="";
       const regdate = this.makeRandomDate();
       //axios.get("http://192.168.1.12:8000/random?regdate=" + regdate)
       axios.get("https://falmy.herokuapp.com/random?regdate=" + regdate)
         .then(response => {
           this.resisterContent(response);
+          this.moreKeyword = true;
         })
         .catch(error => {
           this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
             position: "top-center",
             duration : 10000
           });
+          this.moreKeyword = false;
         })
         .finally(() => {
           this.loading = false;
@@ -174,7 +196,15 @@ export default {
     //もっとキーワード検索用関数
     getMoreKeyword: function() {
       const regdate = this.makeRandomDate();
-      axios.get("https://falmy.herokuapp.com/more?keyword=" + this.keyword + "&" + "regdate=" + regdate)
+      //キーワードが入力されていない時＝「ランダムに表示(getrandom関数)」ボタンで呼び出されたときは
+      //ランダムに検索できるようにquerytextに「""」を代入し、
+      //https://falmy.herokuapp.com/more?keyword=''&regdate=「ランダム8桁」で検索している。
+      let querytext = this.keyword;
+      if(this.keyword === ""){
+        querytext = "\'\'";
+      }
+
+      axios.get("https://falmy.herokuapp.com/more?keyword=" + querytext + "&" + "regdate=" + regdate)
         .then(response => {
           this.resisterContent(response);
         })
@@ -207,6 +237,73 @@ export default {
 }
 </script>
 <style>
+.exampletexts{
+  line-height: 45px;
+  display: inline-block;
+  vertical-align: top;
+  height: 45px;
+  border: 0.1px solid #fff;
+  text-align: center;
+  overflow-y: hidden;
+  cursor: pointer;
+  margin-top: 45px;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+.exampletexts span{
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  animation: ShiftText 15s linear infinite;
+}
+@keyframes ShiftText{
+  0%,10%{
+    top: 0;
+  }
+  11%,20%{
+    top: -45px;
+  }
+  21%,30%{
+    top: -90px;
+  }
+  31%,40%{
+    top: -135px;
+  }
+  41%,50%{
+    top: -180px;
+  }
+  51%,60%{
+    top: -225px;
+  }
+  61%,70%{
+    top: -270px;
+  }
+  71%,80%{
+    top: -315px;
+  }
+  81%,90%{
+    top: -360px;
+  }
+  91%,100%{
+    top: -405px;
+  }
+}
+
+.modal {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  right: 0;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
 .home {
   background-color: #fff;
 }
@@ -245,7 +342,7 @@ h1 {
 }
 
 #searchbox {
-  margin-top: 30px;
+  margin:auto;
   padding: 0.5rem 1rem;
   display: block;
   width: 100%;
@@ -340,11 +437,15 @@ h1 {
     font-weight: 700;
     letter-spacing: 0.05rem;
   }
-
+.exampletexts{
+  margin: auto;
+  font-size: 1.5rem;
+  width: 70%;
+}
   #searchbox {
+    margin-top: 30px;
     height: 100px;
     width: 70%;
-    margin: auto;
     font-size: 3rem;
   }
 
