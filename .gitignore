@@ -20,8 +20,5 @@ yarn-error.log*
 *.sln
 *.sw?
 
-<<<<<<< HEAD
+
 /.firebase/
-=======
-/.firebase
->>>>>>> 54ca59e6f686aa80533ff7d12846e391d8899a54
