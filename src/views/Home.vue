@@ -8,11 +8,9 @@
     <div class="toptitle">
       <img class="sp-top" src="/img/sp-top.png" />
 
-      <!--<p>{{ sharedState.message }}</p>-->
-      <!--<button v-on:click="setMessageAction">setMessageAction</button>-->
-
       <div class="description">
         <p>レファレンス協同データベースからの<br>『簡易キーワード検索』と『ランダムピックアップ表示機能』を提供する個人運営のサービスです。beta版のため、動作はちょっと重めです。</p>
+        <p>求める情報を探すよりは、セレンディピティを楽しむことがコンセプトのサ―ビスです。</p>
       </div>
     </div>
     <div class="topbox">
@@ -22,7 +20,7 @@
         <span v-on:click="setInputBox('おいしい　カニ')">おいしいカニの見分け方</span>
         <span v-on:click="setInputBox('最後　仇討ち')">最後に仇討ちをした人は誰？</span>
         <span v-on:click="setInputBox('大仏　ぶつぶつ')">奈良の大仏さまの頭のぶつぶつはいくつ？</span>
-        <span v-on:click="setInputBox('手話　誰が')">手話は誰が作ったの？</span>
+        <span v-on:click="setInputBox('手話　誰')">手話は誰が作ったの？</span>
         <span v-on:click="setInputBox('蛍 すぐ死ぬ')">蛍はなぜすぐ死んでしまうのか</span>
         <span v-on:click="setInputBox('トナカイ　名前')">サンタクロースのトナカイの名前は？</span>
         <span v-on:click="setInputBox('歳 おすすめ　絵本')">○歳の子どもにお勧めの絵本は？</span>
@@ -144,7 +142,6 @@ export default {
         return;
       }
       this.refqas = [];
-      //axios.get("http://192.168.1.12:8000/?keyword=" + this.keyword)
       axios.get("https://falmy.herokuapp.com/?keyword=" + this.keyword)
         .then(response => {
           this.resisterContent(response);
@@ -176,7 +173,6 @@ export default {
       this.refqas = [];
       this.keyword="";
       const regdate = this.makeRandomDate();
-      //axios.get("http://192.168.1.12:8000/random?regdate=" + regdate)
       axios.get("https://falmy.herokuapp.com/random?regdate=" + regdate)
         .then(response => {
           this.resisterContent(response);
@@ -226,7 +222,6 @@ export default {
     this.getrandom();
   }
   //初期表示での特定キーワードの記事を表示する。しかし、記事詳細に遷移後、
-  //ブラウザの戻るボタンでトップページに戻ると再度実行されしまう点でuiがよくない。
   mounted() {
     axios.get("https://falmy.herokuapp.com/?keyword='読書'")
       .then(response => {
@@ -237,6 +232,9 @@ export default {
 }
 </script>
 <style>
+/*
+事例レコメンド用
+*/
 .exampletexts{
   line-height: 45px;
   display: inline-block;
@@ -247,7 +245,7 @@ export default {
   overflow-y: hidden;
   cursor: pointer;
   margin-top: 45px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   width: 100%;
 }
 
@@ -290,20 +288,9 @@ export default {
     top: -405px;
   }
 }
-
-.modal {
-  position: absolute;
-  top: 100px;
-  left: 0;
-  right: 0;
-  max-width: 300px;
-  margin: 0 auto;
-  padding: 30px;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-}
-
+/*
+全体
+*/
 .home {
   background-color: #fff;
 }
@@ -340,7 +327,9 @@ h1 {
   font-size: 2.5rem;
   line-height: 3rem;
 }
-
+/*
+検索ボックス
+*/
 #searchbox {
   margin:auto;
   padding: 0.5rem 1rem;
@@ -373,7 +362,9 @@ h1 {
 .tweet-pc{
   margin:15px auto 0;
 }
-
+/*
+検索結果
+*/
 .result-question,
 .result-answer {
   padding: 20px;
@@ -409,7 +400,9 @@ h1 {
   margin-bottom: 15px;
   filter: drop-shadow(3px 3px 5px rgba(0,0,0,.3));
 }
-
+/*
+pc用レスポンシブ設定
+*/
 @media screen and (min-width: 768px) {
   .home-top {
     display: flex;
