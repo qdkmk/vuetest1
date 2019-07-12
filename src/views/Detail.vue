@@ -1,6 +1,6 @@
 <template>
 <div class="detail">
-  <div class="nav">
+  <div class="detail-nav">
     <h2>目次</h2>
     <ol>
       <a href="#question">
@@ -57,10 +57,12 @@
       <h3 id="crtdate">事例作成日</h3>
       <p v-html="refqa.crtdate"></p>
       <h3 id="originalurl">元記事URL</h3>
-      <a v-bind:href="refqa.url"><p v-html="refqa.url"></p></a>
+      <a v-bind:href="refqa.url">
+        <p v-html="refqa.url"></p>
+      </a>
     </div>
   </div>
-  <div class="tweet-sp">
+  <div class="detail-tweet-sp">
     <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
   </div>
   <div id="gotop">
@@ -123,31 +125,35 @@ export default {
             bibldesc: bibldesc.innerHTML.replace(/\n/g, "<BR>") + '\n',
             libname: libname.innerHTML.replace(/\n/g, "<BR>") + '\n',
             restype: restype.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            crtdate: crtdate.innerHTML.slice(0,4) + "/" +  crtdate.innerHTML.slice(4,6) + "/" +  crtdate.innerHTML.slice(6) + '\n',
+            crtdate: crtdate.innerHTML.slice(0, 4) + "/" + crtdate.innerHTML.slice(4, 6) + "/" + crtdate.innerHTML.slice(6) + '\n',
             url: url.innerHTML.replace(/&amp;/g, '&') + '\n',
           };
           this.refqas.push(obj)
         }
       })
       .catch(error => {
-        this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+        this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。', {
           position: "top-center",
-          duration : 10000
+          duration: 10000
         });
       })
 
   }
-  }
-
+}
 </script>
 
 <style>
-.nav {
+.detail-nav {
   display: none;
   z-index: 80;
 }
 
-.tweet-sp {
+.detail-tweet-pc {
+  display: none;
+}
+
+.detail-tweet-sp {
+  display: block;
   text-align: left;
   margin: 0 auto 15px 25px;
 }
@@ -159,19 +165,27 @@ export default {
   display: flex;
 }
 
-.article-detail {
+.article-detail-container .article-detail {
   width: 100%;
   display: block;
   text-align: left;
   padding: 15px;
 }
 
-.article-detail h3 {
+.article-detail-container .article-detail h3 {
   border-bottom: 1px solid #999999;
   color: #333;
   font-size: 2rem;
   margin: 0 0 20px;
   padding: 15px 0 10px;
+}
+
+.article-detail-container .article-detail a {
+  color: #000;
+}
+
+.article-detail-container .article-detail a:hover {
+  opacity: 0.7;
 }
 
 #return-top {
@@ -189,18 +203,14 @@ export default {
   width: 50px;
   z-index: 80;
 }
-.article-detail a{
-  color: #000;
-}
-.article-detail a:hover{
-  opacity: 0.7;
-}
+
 @media screen and (min-width: 768px) {
-  .tweet-sp {
+  .detail-tweet-sp {
     display: none;
   }
 
   .detail-tweet-pc {
+    display: block;
     margin-top: 10px;
     text-align: left;
   }
@@ -213,7 +223,7 @@ export default {
     width: 75%;
   }
 
-  .nav {
+  .detail-nav {
     display: block;
     background-color: #ddd;
     position: fixed;
@@ -225,14 +235,14 @@ export default {
     padding: 15px;
   }
 
-  .nav h2 {
+  .detail-nav h2 {
     font-size: 1rem;
     border-bottom: 1px solid #999999;
     color: #333;
     margin-top: 0px;
   }
 
-  .nav a {
+  .detail-nav a {
     text-decoration: none;
     display: block;
     background-color: #666;
@@ -240,17 +250,17 @@ export default {
     color: #fff;
   }
 
-  .nav a :hover {
+  .detail-nav a :hover {
     opacity: 0.7;
   }
 
-  .nav ol {
+  .detail-nav ol {
     margin: 0;
     padding: 0;
     list-style-type: none;
   }
 
-  .nav li {
+  .detail-nav li {
     padding: 5px 15px;
     font-size: 1.3rem;
     line-height: 2rem;

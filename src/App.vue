@@ -50,22 +50,22 @@ a {
 #nav a.router-link-exact-active {
   color: #fff;
 }
-.nav-top,
-.nav-service{
+#nav .nav-top,
+#nav .nav-service{
   padding: 10px;
 }
-.nav-top:hover,
-.nav-service:hover{
+#nav .nav-top:hover,
+#nav .nav-service:hover{
   opacity: 0.8;
 }
-.nav-top{
+#nav .nav-top{
   display: block;
   width: 35%;
 }
-.nav-service{
+#nav .nav-service{
   width: 65%;
 }
-.nav-span{
+#nav .nav-span{
   padding: 10px;
 }
 
