@@ -47,6 +47,9 @@
     <div class="tweet">
       <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
     </div>
+    <div class="scroll-container">
+      <a v-show="prompt" class="scroll" href="#"><span></span><span></span><span></span></a>
+    </div>
     <div v-show="loading" class="loader" id="loading"></div>
   </div>
 
@@ -63,6 +66,7 @@
     </div>
   </div>
   <button v-show="moreKeyword" v-on:click="getMoreKeyword" class="more-button">もっと検索</button>
+  <div v-show="moreLoading" class="loader more"></div>
 </div>
 </template>
 
@@ -79,6 +83,8 @@ export default {
       loading: false,
       moreKeyword: false,
       show: false,
+      prompt:false,
+      moreLoading:false,
     }
 
   },
@@ -86,6 +92,7 @@ export default {
     keyword: function() {
       // lodash.debounceを利用してAPI呼び出しの負荷軽減
       this.loading = true;
+      this.prompt = true;
       this.moreKeyword = false;
       this.debouncedGetAnswer();
     }
@@ -144,6 +151,7 @@ export default {
       }
       this.$store.commit("setMessageAction", this.refqas)
       this.loading = false;
+      this.prompt=false;
     },
     //キーワード検索用関数
     getAnswer: function() {
@@ -180,6 +188,7 @@ export default {
     //ランダム取得用関数
     getrandom: function() {
       this.loading = true;
+      this.prompt=true;
       this.refqas = [];
       this.keyword = "";
       const regdate = this.makeRandomDate();
@@ -197,10 +206,13 @@ export default {
         })
         .finally(() => {
           this.loading = false;
+          this.prompt=false;
         })
     },
     //もっとキーワード検索用関数
     getMoreKeyword: function() {
+      this.moreLoading=true;
+      this.prompt=true;
       const regdate = this.makeRandomDate();
       //キーワードが入力されていない時＝「ランダムに表示(getrandom関数)」ボタンで呼び出されたときは
       //ランダムに検索できるようにquerytextに「""」を代入し、
@@ -222,6 +234,8 @@ export default {
         })
         .finally(() => {
           this.loading = false;
+          this.prompt=false;
+          this.moreLoading=false;
         })
     },
   },
@@ -242,6 +256,48 @@ export default {
 }
 </script>
 <style>
+.scroll-container{
+
+}
+.scroll {
+  padding-top: 80px;
+}
+.scroll span {
+  z-index: 100;
+  position: fixed;
+ bottom: 30px;
+ left: 50%;
+  width: 30px;
+  height: 30px;
+  margin-left: -12px;
+  border-left: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  transform: rotate(-45deg);
+  animation: sdb 2s infinite;
+  opacity: 0;
+  box-sizing: border-box;
+}
+.scroll span:nth-of-type(1) {
+}
+.scroll span:nth-of-type(2) {
+  bottom: 40px;
+  animation-delay: .15s;
+}
+.scroll span:nth-of-type(3) {
+  bottom: 50px;
+  animation-delay: .3s;
+}
+@keyframes sdb {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 /*
 全体
 */
@@ -411,14 +467,14 @@ export default {
 loader
 */
 
-.home-top .loader,
-.home-top .loader:after {
+.loader,
+.loader:after {
   border-radius: 50%;
   width: 10em;
   height: 10em;
 }
 
-.home-top .loader {
+.loader {
   margin: 60px auto;
   font-size: 10px;
   position: relative;
@@ -433,7 +489,13 @@ loader
   -webkit-animation: load8 1.1s infinite linear;
   animation: load8 1.1s infinite linear;
 }
+.more {
+  border-top: 1.1em solid rgba(235, 136, 12, 0.2);
+  border-right: 1.1em solid rgba(235, 136, 12, 0.2);
+  border-bottom: 1.1em solid rgba(235, 136, 12, 0.2);
+  border-left: 1.1em solid #f78200;
 
+}
 @-webkit-keyframes load8 {
   0% {
     -webkit-transform: rotate(0deg);
