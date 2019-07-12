@@ -13,28 +13,16 @@
         <p>求める情報を探すよりは、セレンディピティを楽しむことがコンセプトのサ―ビスです。</p>
       </div>
     </div>
+
     <div class="topbox">
+
+
       <p class="exampletexts">
-        <span v-on:click="setInputBox('モチモチ')">モチモチの木のアクセントは？</span>
-        <span v-on:click="setInputBox('江戸時代 米 値段')">江戸時代の米の値段は？</span>
-        <span v-on:click="setInputBox('おいしい カニ')">おいしいカニの見分け方</span>
-        <span v-on:click="setInputBox('最後 仇討ち')">最後に仇討ちをした人は誰？</span>
-        <span v-on:click="setInputBox('大仏 ぶつぶつ')">奈良の大仏の頭のぶつぶつはいくつ？</span>
-        <span v-on:click="setInputBox('手話 誰')">手話は誰が作ったの？</span>
-        <span v-on:click="setInputBox('蛍 すぐ死ぬ')">蛍はなぜすぐ死んでしまうのか</span>
-        <span v-on:click="setInputBox('トナカイ 名前')">サンタクロースのトナカイの名前は？</span>
-        <span v-on:click="setInputBox('歳 おすすめ 絵本')">○歳の子どもにお勧めの絵本は？</span>
-        <span v-on:click="setInputBox('市場動向')">○○の市場動向を調べたい！</span>
-        <span v-on:click="setInputBox('明治 馬鹿')">明治の馬鹿の番付が見たい</span>
-        <span v-on:click="setInputBox('ホタル 周期')">ホタルの点滅周期は関西と関東で違う？</span>
-        <span v-on:click="setInputBox('技術 カンマ')">技術文書でカンマが使われる理由</span>
-        <span v-on:click="setInputBox('魔法 つかえる')">魔法がつかえるようになりたい。</span>
-        <span v-on:click="setInputBox('パンダ 祖先')">ジャイアントパンダの祖先は？</span>
-        <span v-on:click="setInputBox('パンくずリスト')">「パンくずリスト」の言い換え</span>
-        <span v-on:click="setInputBox('ドラム 作り方')">スティール・ドラムの作り方</span>
-        <span v-on:click="setInputBox('最古 広告')">日本における最古の「広告」</span>
-        <span v-on:click="setInputBox('本の帯')">本の帯の歴史</span>
-        <span v-on:click="setInputBox('凹 凸 卍')">凹凸卍という漢字の期限</span>
+        <transition-group name='fade' tag='div' mode="out-in">
+          <div v-for="number in [currentNumber]" :key='number'>
+            <span v-html="currentWord" v-on:click="setInputBox(currentInputWord)" />
+          </div>
+        </transition-group>
       </p>
       <div>
         <input type="text" id="searchbox" v-model="keyword" placeholder="キーワード検索" @keydown.prevent.enter="moveNext">
@@ -73,6 +61,7 @@
 <script>
 import _ from 'lodash';
 import axios from 'axios';
+import examplesearch from "../assets/example.json"
 
 export default {
   data() {
@@ -83,8 +72,12 @@ export default {
       loading: false,
       moreKeyword: false,
       show: false,
-      prompt:false,
-      moreLoading:false,
+      prompt: false,
+      moreLoading: false,
+      currentNumber: 0,
+      timer: null,
+      words: examplesearch.words,
+      inputwords: examplesearch.inputwords,
     }
 
   },
@@ -99,12 +92,28 @@ export default {
   },
   created: function() {
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 3000);
+    this.startRotation();
 
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
     document.head.appendChild(recaptchaScript)
   },
+  computed: {
+    currentWord: function() {
+      return this.words[Math.abs(this.currentNumber) % this.words.length];
+    },
+    currentInputWord: function() {
+      return this.inputwords[Math.abs(this.currentNumber) % this.inputwords.length];
+    },
+  },
   methods: {
+    startRotation: function() {
+      this.timer = setInterval(this.next, 3000);
+    },
+    next: function() {
+      this.currentNumber += 1
+    },
+
     setInputBox(searchtext) {
       document.getElementById("searchbox").value = searchtext;
       this.refqas = [];
@@ -151,7 +160,7 @@ export default {
       }
       this.$store.commit("setMessageAction", this.refqas)
       this.loading = false;
-      this.prompt=false;
+      this.prompt = false;
     },
     //キーワード検索用関数
     getAnswer: function() {
@@ -188,7 +197,7 @@ export default {
     //ランダム取得用関数
     getrandom: function() {
       this.loading = true;
-      this.prompt=true;
+      this.prompt = true;
       this.refqas = [];
       this.keyword = "";
       const regdate = this.makeRandomDate();
@@ -206,13 +215,13 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.prompt=false;
+          this.prompt = false;
         })
     },
     //もっとキーワード検索用関数
     getMoreKeyword: function() {
-      this.moreLoading=true;
-      this.prompt=true;
+      this.moreLoading = true;
+      this.prompt = true;
       const regdate = this.makeRandomDate();
       //キーワードが入力されていない時＝「ランダムに表示(getrandom関数)」ボタンで呼び出されたときは
       //ランダムに検索できるようにquerytextに「""」を代入し、
@@ -234,11 +243,13 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.prompt=false;
-          this.moreLoading=false;
+          this.prompt = false;
+          this.moreLoading = false;
         })
     },
+
   },
+
 
   /*
   //初期表示でランダムな記事を表示する。※created()は既にあるので使うときはがっちゃんこする。
@@ -256,17 +267,38 @@ export default {
 }
 </script>
 <style>
-.scroll-container{
+.fade-enter {
+  transform: translateY(30px);
+}
+
+.fade-enter-active {
+  transition: all 1.3s ease;
+}
+
+.fade-leave-active {
+  transform: translate(0px, 0px);
+  transition: all 0.7s ease;
+  visibility: visible;
+  opacity: 1;
 
 }
+
+.fade-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+.scroll-container {}
+
 .scroll {
   padding-top: 80px;
 }
+
 .scroll span {
   z-index: 100;
   position: fixed;
- bottom: 30px;
- left: 50%;
+  bottom: 30px;
+  left: 50%;
   width: 30px;
   height: 30px;
   margin-left: -12px;
@@ -277,27 +309,33 @@ export default {
   opacity: 0;
   box-sizing: border-box;
 }
-.scroll span:nth-of-type(1) {
-}
+
+.scroll span:nth-of-type(1) {}
+
 .scroll span:nth-of-type(2) {
   bottom: 40px;
   animation-delay: .15s;
 }
+
 .scroll span:nth-of-type(3) {
   bottom: 50px;
   animation-delay: .3s;
 }
+
 @keyframes sdb {
   0% {
     opacity: 0;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }
 }
+
 /*
 全体
 */
@@ -356,35 +394,12 @@ export default {
 }
 
 .home-top .topbox .exampletexts span {
-  position: relative;
-  display: inline-block;
   width: 100%;
   height: 100%;
-  animation: ShiftText 30s linear infinite;
+
 }
 
-@keyframes ShiftText {
-  0%, 5% {top: 0;}
-  6%, 10% {top: -45px;}
-  11%, 15% {top: -90px;}
-  16%, 20% {top: -135px;}
-  21%, 25% {top: -180px;}
-  26%, 30% {top: -225px;}
-  31%, 35% {top: -270px;}
-  36%, 40% {top: -315px;}
-  41%, 45% {top: -360px;}
-  46%, 50% {top: -405px;}
-  51%, 55% {top: -450px;}
-  56%, 60% {top: -495px;}
-  61%, 65% {top: -540px;}
-  66%, 70% {top: -585px;}
-  71%, 75% {top: -630px;}
-  76%, 80% {top: -675px;}
-  81%, 85% {top: -720px;}
-  86%, 90% {top: -765px;}
-  91%, 95% {top: -810px;}
-  96%, 100% {top: -855px;}
-}
+
 
 /*
 検索ボックス
@@ -399,7 +414,7 @@ export default {
 }
 
 .home-top .topbox .random-button,
- .more-button {
+.more-button {
   margin: 10px auto;
   display: inline-block;
   background-color: #f78200;
@@ -442,6 +457,7 @@ export default {
   margin-bottom: 15px;
   filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, .3));
 }
+
 .resultswrapper .result .result-question,
 .resultswrapper .result .result-answer {
   padding: 20px;
@@ -489,6 +505,7 @@ loader
   -webkit-animation: load8 1.1s infinite linear;
   animation: load8 1.1s infinite linear;
 }
+
 .more {
   border-top: 1.1em solid rgba(235, 136, 12, 0.2);
   border-right: 1.1em solid rgba(235, 136, 12, 0.2);
@@ -496,6 +513,7 @@ loader
   border-left: 1.1em solid #f78200;
 
 }
+
 @-webkit-keyframes load8 {
   0% {
     -webkit-transform: rotate(0deg);
@@ -566,7 +584,7 @@ pc用レスポンシブ設定
   }
 
   .home-top .topbox .random-button,
-  .more-button{
+  .more-button {
     margin: 10px auto;
     font-size: 3rem;
     padding: 1rem 1rem;
@@ -583,6 +601,7 @@ pc用レスポンシブ設定
     right: 30px;
     bottom: 30px;
   }
+
   /*
   検索結果
   */
@@ -599,6 +618,7 @@ pc用レスポンシブ設定
   .resultswrapper .result {
     width: 30%;
   }
+
   .more-button {
     margin: 0 auto 30px;
     font-size: 2rem;
@@ -606,5 +626,4 @@ pc用レスポンシブ設定
   }
 
 }
-
 </style>
