@@ -2,10 +2,10 @@
 <div class="home">
 
   <div class="home-top">
-    <div class="pc-top-title">
-      <h1>レファ協<br>ランダム検索</h1>
-    </div>
     <div class="toptitle">
+      <div class="pc-top-title">
+        <h1>レファ協<br>ランダム検索</h1>
+      </div>
       <img class="sp-top" src="/img/sp-top.png" />
 
       <div class="description">
@@ -16,17 +16,26 @@
     <div class="topbox">
       <p class="exampletexts">
         <span v-on:click="setInputBox('モチモチ')">モチモチの木のアクセントは？</span>
-        <span v-on:click="setInputBox('江戸時代　米　値段')">江戸時代の米の値段は？</span>
-        <span v-on:click="setInputBox('おいしい　カニ')">おいしいカニの見分け方</span>
-        <span v-on:click="setInputBox('最後　仇討ち')">最後に仇討ちをした人は誰？</span>
-        <span v-on:click="setInputBox('大仏　ぶつぶつ')">奈良の大仏さまの頭のぶつぶつはいくつ？</span>
-        <span v-on:click="setInputBox('手話　誰')">手話は誰が作ったの？</span>
+        <span v-on:click="setInputBox('江戸時代 米 値段')">江戸時代の米の値段は？</span>
+        <span v-on:click="setInputBox('おいしい カニ')">おいしいカニの見分け方</span>
+        <span v-on:click="setInputBox('最後 仇討ち')">最後に仇討ちをした人は誰？</span>
+        <span v-on:click="setInputBox('大仏 ぶつぶつ')">奈良の大仏の頭のぶつぶつはいくつ？</span>
+        <span v-on:click="setInputBox('手話 誰')">手話は誰が作ったの？</span>
         <span v-on:click="setInputBox('蛍 すぐ死ぬ')">蛍はなぜすぐ死んでしまうのか</span>
-        <span v-on:click="setInputBox('トナカイ　名前')">サンタクロースのトナカイの名前は？</span>
-        <span v-on:click="setInputBox('歳 おすすめ　絵本')">○歳の子どもにお勧めの絵本は？</span>
+        <span v-on:click="setInputBox('トナカイ 名前')">サンタクロースのトナカイの名前は？</span>
+        <span v-on:click="setInputBox('歳 おすすめ 絵本')">○歳の子どもにお勧めの絵本は？</span>
         <span v-on:click="setInputBox('市場動向')">○○の市場動向を調べたい！</span>
+        <span v-on:click="setInputBox('明治 馬鹿')">明治の馬鹿の番付が見たい</span>
+        <span v-on:click="setInputBox('ホタル 周期')">ホタルの点滅周期は関西と関東で違う？</span>
+        <span v-on:click="setInputBox('技術 カンマ')">技術文書でカンマが使われる理由</span>
+        <span v-on:click="setInputBox('魔法 つかえる')">魔法がつかえるようになりたい。</span>
+        <span v-on:click="setInputBox('パンダ 祖先')">ジャイアントパンダの祖先は？</span>
+        <span v-on:click="setInputBox('パンくずリスト')">「パンくずリスト」の言い換え</span>
+        <span v-on:click="setInputBox('ドラム 作り方')">スティール・ドラムの作り方</span>
+        <span v-on:click="setInputBox('最古 広告')">日本における最古の「広告」</span>
+        <span v-on:click="setInputBox('本の帯')">本の帯の歴史</span>
+        <span v-on:click="setInputBox('凹 凸 卍')">凹凸卍という漢字の期限</span>
       </p>
-
       <div>
         <input type="text" id="searchbox" v-model="keyword" placeholder="キーワード検索" @keydown.prevent.enter="moveNext">
       </div>
@@ -35,7 +44,7 @@
       </div>
       <button v-on:click="getrandom" class="random-button">ランダムに表示</button>
     </div>
-    <div class="tweet-pc">
+    <div class="tweet">
       <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
     </div>
     <div v-show="loading" class="loader" id="loading"></div>
@@ -53,7 +62,7 @@
       </router-link>
     </div>
   </div>
-  <button v-show="moreKeyword" v-on:click="getMoreKeyword" class="random-button more-button">もっと検索</button>
+  <button v-show="moreKeyword" v-on:click="getMoreKeyword" class="more-button">もっと検索</button>
 </div>
 </template>
 
@@ -69,7 +78,7 @@ export default {
       sharedState: this.$store.state,
       loading: false,
       moreKeyword: false,
-      show:false,
+      show: false,
     }
 
   },
@@ -89,14 +98,15 @@ export default {
     document.head.appendChild(recaptchaScript)
   },
   methods: {
-    setInputBox(searchtext){
-      document.getElementById( "searchbox" ).value = searchtext;
-      this.keyword=searchtext;
+    setInputBox(searchtext) {
+      document.getElementById("searchbox").value = searchtext;
+      this.refqas = [];
+      this.keyword = searchtext;
     },
-    doClick:function(){
-      this.$toasted.show('hello billo',{
+    doClick: function() {
+      this.$toasted.show('hello billo', {
         position: "top-center",
-        duration : 10000
+        duration: 10000
       });
     },
     //検索ボックスからフォーカスを外す関数。スマホのソフトウェアキーボードを閉じるため。
@@ -148,14 +158,14 @@ export default {
           this.moreKeyword = true;
         })
         .catch(error => {
-          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。', {
             position: "top-center",
-            duration : 10000
+            duration: 10000
           });
         })
         .finally(() => {
           this.loading = false;
-          })
+        })
     },
     //2004/3/6～現在までの間のランダムな日付を生成。2004/3/6はデータ登録日の最古と思われる日付。
     makeRandomDate: function() {
@@ -171,7 +181,7 @@ export default {
     getrandom: function() {
       this.loading = true;
       this.refqas = [];
-      this.keyword="";
+      this.keyword = "";
       const regdate = this.makeRandomDate();
       axios.get("https://falmy.herokuapp.com/random?regdate=" + regdate)
         .then(response => {
@@ -179,15 +189,15 @@ export default {
           this.moreKeyword = true;
         })
         .catch(error => {
-          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。', {
             position: "top-center",
-            duration : 10000
+            duration: 10000
           });
           this.moreKeyword = false;
         })
         .finally(() => {
           this.loading = false;
-          })
+        })
     },
     //もっとキーワード検索用関数
     getMoreKeyword: function() {
@@ -196,7 +206,7 @@ export default {
       //ランダムに検索できるようにquerytextに「""」を代入し、
       //https://falmy.herokuapp.com/more?keyword=''&regdate=「ランダム8桁」で検索している。
       let querytext = this.keyword;
-      if(this.keyword === ""){
+      if (this.keyword === "") {
         querytext = "\'\'";
       }
 
@@ -205,9 +215,9 @@ export default {
           this.resisterContent(response);
         })
         .catch(error => {
-          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。',{
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。', {
             position: "top-center",
-            duration : 10000
+            duration: 10000
           });
         })
         .finally(() => {
@@ -233,62 +243,6 @@ export default {
 </script>
 <style>
 /*
-事例レコメンド用
-*/
-.exampletexts{
-  line-height: 45px;
-  display: inline-block;
-  vertical-align: top;
-  height: 45px;
-  border: 0.1px solid #fff;
-  text-align: center;
-  overflow-y: hidden;
-  cursor: pointer;
-  margin-top: 45px;
-  font-size: 0.9rem;
-  width: 100%;
-}
-
-.exampletexts span{
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  animation: ShiftText 15s linear infinite;
-}
-@keyframes ShiftText{
-  0%,10%{
-    top: 0;
-  }
-  11%,20%{
-    top: -45px;
-  }
-  21%,30%{
-    top: -90px;
-  }
-  31%,40%{
-    top: -135px;
-  }
-  41%,50%{
-    top: -180px;
-  }
-  51%,60%{
-    top: -225px;
-  }
-  61%,70%{
-    top: -270px;
-  }
-  71%,80%{
-    top: -315px;
-  }
-  81%,90%{
-    top: -360px;
-  }
-  91%,100%{
-    top: -405px;
-  }
-}
-/*
 全体
 */
 .home {
@@ -304,16 +258,21 @@ export default {
   color: #fff;
 }
 
-.pc-top-title {
+.home-top .toptitle .pc-top-title {
   display: none;
 }
 
-.sp-top {
+.home-top .toptitle .pc-top-title h1 {
+  font-size: 2.5rem;
+  line-height: 3rem;
+}
+
+.home-top .toptitle .sp-top {
   display: block;
   width: 100%;
 }
 
-.description {
+.home-top .topbox .description {
   margin-top: 15px;
   font-size: 1rem;
   line-height: 1.75rem;
@@ -323,15 +282,59 @@ export default {
   letter-spacing: 0.1rem;
 }
 
-h1 {
-  font-size: 2.5rem;
-  line-height: 3rem;
+/*
+事例レコメンド用
+*/
+.home-top .topbox .exampletexts {
+  line-height: 45px;
+  display: inline-block;
+  vertical-align: top;
+  height: 45px;
+  border: 0.1px solid #fff;
+  text-align: center;
+  overflow-y: hidden;
+  cursor: pointer;
+  margin-top: 45px;
+  font-size: 0.9rem;
+  width: 100%;
 }
+
+.home-top .topbox .exampletexts span {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  animation: ShiftText 30s linear infinite;
+}
+
+@keyframes ShiftText {
+  0%, 5% {top: 0;}
+  6%, 10% {top: -45px;}
+  11%, 15% {top: -90px;}
+  16%, 20% {top: -135px;}
+  21%, 25% {top: -180px;}
+  26%, 30% {top: -225px;}
+  31%, 35% {top: -270px;}
+  36%, 40% {top: -315px;}
+  41%, 45% {top: -360px;}
+  46%, 50% {top: -405px;}
+  51%, 55% {top: -450px;}
+  56%, 60% {top: -495px;}
+  61%, 65% {top: -540px;}
+  66%, 70% {top: -585px;}
+  71%, 75% {top: -630px;}
+  76%, 80% {top: -675px;}
+  81%, 85% {top: -720px;}
+  86%, 90% {top: -765px;}
+  91%, 95% {top: -810px;}
+  96%, 100% {top: -855px;}
+}
+
 /*
 検索ボックス
 */
-#searchbox {
-  margin:auto;
+.home-top .topbox #searchbox {
+  margin: auto;
   padding: 0.5rem 1rem;
   display: block;
   width: 100%;
@@ -339,7 +342,8 @@ h1 {
   color: f78200;
 }
 
-.random-button {
+.home-top .topbox .random-button,
+ .more-button {
   margin: 10px auto;
   display: inline-block;
   background-color: #f78200;
@@ -355,37 +359,19 @@ h1 {
   -webkit-tap-highlight-color: transparent;
   transition: .3s ease-out;
 }
-.or{
+
+.home-top .topbox .or {
   font-size: 1.2rem;
   line-height: 1.3rem;
 }
-.tweet-pc{
-  margin:15px auto 0;
+
+.home-top .tweet {
+  margin: 15px auto 0;
 }
+
 /*
 検索結果
 */
-.result-question,
-.result-answer {
-  padding: 20px;
-  color: #000;
-  text-align: left;
-  overflow: hidden;
-}
-
-.result-question {
-  background-color: #ccc;
-  font-size: 1.3rem;
-  line-height: 1.8rem;
-  letter-spacing: 0.02rem;
-}
-
-.result-answer {
-  background-color: #eee;
-  border: 1px solid #ccc;
-  line-height: 1.4rem;
-}
-
 .resultswrapper {
   width: 90%;
   margin: 0 auto;
@@ -394,103 +380,45 @@ h1 {
   justify-content: space-around;
 }
 
-.result {
+.resultswrapper .result {
   width: 100%;
   margin-top: 15px;
   margin-bottom: 15px;
-  filter: drop-shadow(3px 3px 5px rgba(0,0,0,.3));
+  filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, .3));
 }
-/*
-pc用レスポンシブ設定
-*/
-@media screen and (min-width: 768px) {
-  .home-top {
-    display: flex;
-    flex-flow: wrap;
-  }
+.resultswrapper .result .result-question,
+.resultswrapper .result .result-answer {
+  padding: 20px;
+  color: #000;
+  text-align: left;
+  overflow: hidden;
+}
 
-  .toptitle {
-    display: block;
-    width: 50%;
-    padding: 30px;
-    margin: auto;
-  }
-
-  .topbox {
-    width: 50%;
-    margin: auto;
-    padding-top: 100px;
-
-  }
-
-  h1 {
-    font-size: 4rem;
-    line-height: 5rem;
-    margin: 30px auto;
-    font-weight: 700;
-    letter-spacing: 0.05rem;
-  }
-.exampletexts{
-  margin: auto;
+.resultswrapper .result .result-question {
+  background-color: #ccc;
   font-size: 1.3rem;
-  width: 70%;
-
+  line-height: 1.8rem;
+  letter-spacing: 0.02rem;
 }
-  #searchbox {
-    margin-top: 30px;
-    height: 100px;
-    width: 70%;
-    font-size: 3rem;
-  }
 
-  .random-button {
-    margin: 10px auto;
-    font-size: 3rem;
-    padding: 1rem 1rem;
-    width: 70%;
-  }
-  .or{
-    font-size: 2rem;
-  }
-.tweet-pc{
-  z-index: 100;
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-}
-  .loader {
-    display: block;
-  }
-
-  .resultswrapper {
-    margin: 0px auto 0;
-    flex-flow: wrap;
-    width: 100%;
-  }
-
-  .result {
-    width: 30%;
-  }
-
-  .more-button {
-    margin: 0 auto 30px;
-    font-size: 2rem;
-    width: 40%;
-  }
+.resultswrapper .result .result-answer {
+  background-color: #eee;
+  border: 1px solid #ccc;
+  line-height: 1.4rem;
 }
 
 /*
 loader
 */
 
-.loader,
-.loader:after {
+.home-top .loader,
+.home-top .loader:after {
   border-radius: 50%;
   width: 10em;
   height: 10em;
 }
 
-.loader {
+.home-top .loader {
   margin: 60px auto;
   font-size: 10px;
   position: relative;
@@ -529,4 +457,92 @@ loader
     transform: rotate(360deg);
   }
 }
+
+/*
+pc用レスポンシブ設定
+*/
+@media screen and (min-width: 768px) {
+  .home-top {
+    display: flex;
+    flex-flow: wrap;
+  }
+
+  .home-top .toptitle {
+    display: block;
+    width: 50%;
+    padding: 30px;
+    margin: auto;
+  }
+
+  .home-top .topbox {
+    width: 50%;
+    margin: auto;
+    padding-top: 100px;
+
+  }
+
+  .home-top .toptitle .pc-top-title h1 {
+    font-size: 4rem;
+    line-height: 5rem;
+    margin: 30px auto;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+  }
+
+  .home-top .topbox .exampletexts {
+    margin: auto;
+    font-size: 1.3rem;
+    width: 70%;
+
+  }
+
+  .home-top .topbox #searchbox {
+    margin-top: 30px;
+    height: 100px;
+    width: 70%;
+    font-size: 3rem;
+  }
+
+  .home-top .topbox .random-button,
+  .more-button{
+    margin: 10px auto;
+    font-size: 3rem;
+    padding: 1rem 1rem;
+    width: 70%;
+  }
+
+  .home-top .topbox .or {
+    font-size: 2rem;
+  }
+
+  .home-top .tweet {
+    z-index: 100;
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+  }
+  /*
+  検索結果
+  */
+  .home-top .loader {
+    display: block;
+  }
+
+  .resultswrapper {
+    margin: 0px auto 0;
+    flex-flow: wrap;
+    width: 100%;
+  }
+
+  .resultswrapper .result {
+    width: 30%;
+  }
+  .more-button {
+    margin: 0 auto 30px;
+    font-size: 2rem;
+    width: 40%;
+  }
+
+}
+
 </style>
