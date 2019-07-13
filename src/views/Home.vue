@@ -466,21 +466,24 @@ export default {
 .resultswrapper .result .result-answer {
   padding: 20px;
   color: #000;
-  text-align: left;
+  text-align: justify;
   overflow: hidden;
 }
 
 .resultswrapper .result .result-question {
-  background-color: #ccc;
+  background-color: #eee;
+  border: 1px solid #ddd;
   font-size: 1.3rem;
   line-height: 1.8rem;
-  letter-spacing: 0.02rem;
+  letter-spacing: 0.03rem;
+
 }
 
 .resultswrapper .result .result-answer {
-  background-color: #eee;
-  border: 1px solid #ccc;
+  background-color: #fff;
+  border: 1px solid #eee;
   line-height: 1.4rem;
+  text-align: justify;
 }
 
 /*
@@ -622,7 +625,15 @@ pc用レスポンシブ設定
   .resultswrapper .result {
     width: 30%;
   }
-
+  .resultswrapper .result .result-question {
+    font-size: 1.4rem;
+    line-height: 1.8rem;
+    letter-spacing: 0.06rem;
+  }
+  .resultswrapper .result .result-answer {
+    line-height: 1.6rem;
+    letter-spacing: 0.05rem;
+  }
   .more-button {
     margin: 0 auto 30px;
     font-size: 2rem;
