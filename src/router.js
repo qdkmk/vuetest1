@@ -15,6 +15,10 @@ export default new Router({
       component: Home
     },
     {
+      path: '/keyword/:keyword',
+      component: Home
+    },
+    {
       path: '/detail/:sysid',
       name: 'detail',
       component: () => import(/* webpackChunkName: "about" */ './views/Detail.vue')

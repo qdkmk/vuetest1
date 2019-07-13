@@ -30,6 +30,9 @@
       <a href="#originalurl">
         <li>元記事URL</li>
       </a>
+      <a href="#keyword">
+        <li>キーワード</li>
+      </a>
     </ol>
     <div class="detail-tweet-pc">
       <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
@@ -60,6 +63,10 @@
       <a v-bind:href="refqa.url">
         <p v-html="refqa.url"></p>
       </a>
+      <h3 id="keyword">キーワード</h3>
+      <span v-for="keyword in refqa.keywords" class="tag" v-bind:key=keyword>
+        <a v-bind:href="'https://testreftika.web.app/keyword/' + keyword">{{keyword}}</a>
+      </span>
     </div>
   </div>
   <div class="detail-tweet-sp">
@@ -103,6 +110,8 @@ export default {
         restypeElm.innerHTML = ("not found");
         let crtdateElm = oDOM.createElement("crt-date");
         crtdateElm.innerHTML = ("00000000");
+        let keywordsElm = oDOM.createElement("keyword");
+        keywordsElm.innerHTML = ("");
 
 
         for (const result of results) {
@@ -114,7 +123,8 @@ export default {
           const libname = result.getElementsByTagName("reference")[0].getElementsByTagName("lib-name")[0] || libnameElm;
           const restype = result.getElementsByTagName("reference")[0].getElementsByTagName("res-type")[0] || restypeElm;
           const crtdate = result.getElementsByTagName("reference")[0].getElementsByTagName("crt-date")[0] || crtdateElm;
-
+          const keywords = result.getElementsByTagName("reference")[0].getElementsByTagName("keyword")|| keywordsElm;
+          const keywordsArray = Array.prototype.slice.call(keywords);
           const url = result.getElementsByTagName("reference")[0].getElementsByTagName("url")[0];
 
           const obj = {
@@ -126,6 +136,7 @@ export default {
             libname: libname.innerHTML.replace(/\n/g, "<BR>") + '\n',
             restype: restype.innerHTML.replace(/\n/g, "<BR>") + '\n',
             crtdate: crtdate.innerHTML.slice(0, 4) + "/" + crtdate.innerHTML.slice(4, 6) + "/" + crtdate.innerHTML.slice(6) + '\n',
+            keywords: keywordsArray.map(item => item.innerHTML),
             url: url.innerHTML.replace(/&amp;/g, '&') + '\n',
           };
           this.refqas.push(obj)
@@ -203,6 +214,16 @@ export default {
   width: 50px;
   z-index: 80;
 }
+.article-detail-container .article-detail .tag{
+  display: inline-block;
+  margin: 5px;
+  padding: 5px;
+  background-color: #f78200;
+  border-radius: 3px;
+}
+.article-detail-container .article-detail .tag a{
+  color: #fff;
+}
 
 @media screen and (min-width: 768px) {
   .detail-tweet-sp {
@@ -262,8 +283,8 @@ export default {
 
   .detail-nav li {
     padding: 5px 15px;
-    font-size: 1.3rem;
-    line-height: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.8rem;
     list-style: none;
   }
 }

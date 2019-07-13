@@ -16,7 +16,6 @@
 
     <div class="topbox">
 
-
       <p class="exampletexts" v-on:click="setInputBox(currentInputWord)">
         <transition appear name='slide' tag='div' v-on:after-enter="next" mode="out-in">
           <span v-html="currentWord" :key='currentNumber'  />
@@ -75,6 +74,7 @@ export default {
       currentNumber: 0,
       words: examplesearch.words,
       inputwords: examplesearch.inputwords,
+      path:location.pathname,
     }
 
   },
@@ -89,6 +89,8 @@ export default {
   },
   created: function() {
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 3000);
+    //Detailからのリンク用。keywordが設定されている場合は検索ボックスに入力する。
+    if(this.path.match(/\/keyword\/./)){this.keyword=this.$route.params.keyword}
     //twitterのjs読み込み
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
