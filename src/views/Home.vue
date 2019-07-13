@@ -17,12 +17,10 @@
     <div class="topbox">
 
 
-      <p class="exampletexts">
-        <transition-group name='fade' tag='div' mode="out-in">
-          <div v-for="number in [currentNumber]" :key='number'>
-            <span v-html="currentWord" v-on:click="setInputBox(currentInputWord)" />
-          </div>
-        </transition-group>
+      <p class="exampletexts" v-on:click="setInputBox(currentInputWord)">
+        <transition appear name='slide' tag='div' v-on:after-enter="next" mode="out-in">
+          <span v-html="currentWord" :key='currentNumber'  />
+        </transition>
       </p>
       <div>
         <input type="text" id="searchbox" v-model="keyword" placeholder="キーワード検索" @keydown.prevent.enter="moveNext">
@@ -36,7 +34,7 @@
       <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-size="large">Tweet</a>
     </div>
     <div class="scroll-container">
-      <a v-show="prompt" class="scroll" href="#"><span></span><span></span><span></span></a>
+      <a v-show="promptScroll" class="scroll" href="#"><span></span><span></span><span></span></a>
     </div>
     <div v-show="loading" class="loader" id="loading"></div>
   </div>
@@ -71,11 +69,10 @@ export default {
       sharedState: this.$store.state,
       loading: false,
       moreKeyword: false,
-      show: false,
-      prompt: false,
+      promptScroll: false,
       moreLoading: false,
+      //検索レコメンド用
       currentNumber: 0,
-      timer: null,
       words: examplesearch.words,
       inputwords: examplesearch.inputwords,
     }
@@ -85,46 +82,40 @@ export default {
     keyword: function() {
       // lodash.debounceを利用してAPI呼び出しの負荷軽減
       this.loading = true;
-      this.prompt = true;
+      this.promptScroll = true;
       this.moreKeyword = false;
       this.debouncedGetAnswer();
     }
   },
   created: function() {
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 3000);
-    this.startRotation();
-
+    //twitterのjs読み込み
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
     document.head.appendChild(recaptchaScript)
   },
+  //検索レコメンド用
   computed: {
     currentWord: function() {
-      return this.words[Math.abs(this.currentNumber) % this.words.length];
+      return this.words[this.currentNumber % this.words.length];
     },
     currentInputWord: function() {
-      return this.inputwords[Math.abs(this.currentNumber) % this.inputwords.length];
+      return this.inputwords[this.currentNumber % this.inputwords.length];
     },
   },
   methods: {
-    startRotation: function() {
-      this.timer = setInterval(this.next, 3000);
-    },
+    //検索レコメンド用
     next: function() {
-      this.currentNumber += 1
+      setTimeout(() => {
+        this.currentNumber += 1
+      }, 3000)
     },
-
     setInputBox(searchtext) {
       document.getElementById("searchbox").value = searchtext;
       this.refqas = [];
       this.keyword = searchtext;
     },
-    doClick: function() {
-      this.$toasted.show('hello billo', {
-        position: "top-center",
-        duration: 10000
-      });
-    },
+
     //検索ボックスからフォーカスを外す関数。スマホのソフトウェアキーボードを閉じるため。
     moveNext: function() {
       document.activeElement.blur();
@@ -160,7 +151,7 @@ export default {
       }
       this.$store.commit("setMessageAction", this.refqas)
       this.loading = false;
-      this.prompt = false;
+      this.promptScroll = false;
     },
     //キーワード検索用関数
     getAnswer: function() {
@@ -197,7 +188,7 @@ export default {
     //ランダム取得用関数
     getrandom: function() {
       this.loading = true;
-      this.prompt = true;
+      this.promptScroll = true;
       this.refqas = [];
       this.keyword = "";
       const regdate = this.makeRandomDate();
@@ -215,13 +206,13 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.prompt = false;
+          this.promptScroll = false;
         })
     },
     //もっとキーワード検索用関数
     getMoreKeyword: function() {
       this.moreLoading = true;
-      this.prompt = true;
+      this.promptScroll = true;
       const regdate = this.makeRandomDate();
       //キーワードが入力されていない時＝「ランダムに表示(getrandom関数)」ボタンで呼び出されたときは
       //ランダムに検索できるようにquerytextに「""」を代入し、
@@ -243,7 +234,7 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.prompt = false;
+          this.promptScroll = false;
           this.moreLoading = false;
         })
     },
@@ -267,25 +258,32 @@ export default {
 }
 </script>
 <style>
-.fade-enter {
+.slide-enter-active {
+  transition: all 0.6s ease 0s;
+  position: absolute;
+}
+
+.slide-leave-active {
+  transition: all 0.3s ease 0s;
+  position: absolute;
+}
+
+.slide-enter,
+.slide-leave-to {
+  opacity: 0;
+}
+
+.slide-enter {
   transform: translateY(30px);
 }
 
-.fade-enter-active {
-  transition: all 1.3s ease;
+.slide-enter-to,
+.slide-leave {
+  transform: translateY(0);
 }
 
-.fade-leave-active {
-  transform: translate(0px, 0px);
-  transition: all 0.7s ease;
-  visibility: visible;
-  opacity: 1;
-
-}
-
-.fade-leave-to {
+.slide-leave-to {
   transform: translateY(-30px);
-  opacity: 0;
 }
 
 .scroll-container {}
@@ -391,12 +389,16 @@ export default {
   margin-top: 45px;
   font-size: 0.9rem;
   width: 100%;
+  position: relative;
 }
 
 .home-top .topbox .exampletexts span {
   width: 100%;
   height: 100%;
-
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 
