@@ -65,7 +65,9 @@
       </a>
       <h3 id="keyword">キーワード</h3>
       <span v-for="keyword in refqa.keywords" class="tag" v-bind:key=keyword>
+
         <a v-bind:href="'https://testreftika.web.app/keyword/' + keyword">{{keyword}}</a>
+
       </span>
     </div>
   </div>
@@ -238,10 +240,11 @@ export default {
 
   .article-detail-container {
     padding: 30px;
+    width: 70%;
   }
 
   .article-detail {
-    width: 75%;
+    line-height: 1.6rem;
   }
 
   .detail-nav {
