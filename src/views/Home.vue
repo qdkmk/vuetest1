@@ -90,7 +90,7 @@ export default {
   created: function() {
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 3000);
     //Detailからのリンク用。keywordが設定されている場合は検索ボックスに入力する。
-    if(this.path.match(/\/keyword\/./)){this.keyword=this.$route.params.keyword}
+    if(this.path.match(/\/keyword\/./) && this.sharedState.message === ""){this.keyword=this.$route.params.keyword}
     //twitterのjs読み込み
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
