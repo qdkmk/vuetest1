@@ -409,16 +409,19 @@ export default {
 検索ボックス
 */
 .home-top .topbox #searchbox {
+  font-family:"YakuHanJPs", 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
   margin: auto;
   padding: 0.5rem 1rem;
   display: block;
   width: 100%;
   font-size: 1.5rem;
   color: f78200;
+
 }
 
 .home-top .topbox .random-button,
 .more-button {
+  font-family:"YakuHanJPs", 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
   margin: 10px auto;
   display: inline-block;
   background-color: #f78200;
