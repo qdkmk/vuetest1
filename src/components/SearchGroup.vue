@@ -205,6 +205,29 @@ export default {
 /*
 事例レコメンド用
 */
+.slide-enter-active {
+  transition: all 0.6s ease 0s;
+  position: absolute;
+}
+.slide-leave-active {
+  transition: all 0.3s ease 0s;
+  position: absolute;
+}
+.slide-enter,
+.slide-leave-to {
+  opacity: 0;
+}
+.slide-enter {
+  transform: translateY(30px);
+}
+.slide-enter-to,
+.slide-leave {
+  transform: translateY(0);
+}
+.slide-leave-to {
+  transform: translateY(-30px);
+}
+
 .SearchGroup .exampletexts {
   line-height: 45px;
   display: inline-block;
