@@ -67,7 +67,7 @@
       <span v-for="keyword in refqa.keywords" class="tag" v-bind:key=keyword>
 
         <a v-bind:href="'https://testreftika.web.app/keyword/' + keyword">{{keyword}}</a>
-
+        <!--<a v-bind:href="'http://localhost:8081/keyword/' + keyword">{{keyword}}</a>-->
       </span>
     </div>
   </div>
@@ -92,6 +92,11 @@ export default {
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
     document.head.appendChild(recaptchaScript)
+  },
+  methods:{
+    reflesh: function() {
+      this.$store.commit("clearMessageAction");
+    }
   },
   mounted() {
     axios.get("https://falmy.herokuapp.com/detail?sysid=" + this.$route.params.sysid)
@@ -155,7 +160,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .detail-nav {
   display: none;
   z-index: 80;

@@ -5,8 +5,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    message: '',
-    count: 1
+    message: [],
+    count: 1,
+    loading:false,
+    moreKeyword:false,
+    promptScroll:false,
+    keyword:"",
+    noMoreFlag:false,
   },
 
   mutations: {
@@ -16,10 +21,25 @@ export default new Vuex.Store({
     },
 
     setMessageAction(state, newValue) {
-      this.state.message = newValue
+      this.state.message = this.state.message.concat(newValue);
     },
     clearMessageAction() {
-      this.state.message = ''
+      this.state.message = [];
+    },
+    setLoadingAction (state,newboolean) {
+      this.state.loading = newboolean;
+    },
+    setMoreKeyWordButtonAction (state,newboolean) {
+      this.state.moreKeyword = newboolean;
+    },
+    setPromptScrollAction (state,newboolean) {
+      this.state.promptScroll = newboolean;
+    },
+    setKeyWordAction (state,newkeyWord) {
+      this.state.keyword = newkeyWord;
+    },
+    setNoMoreFlagAction (state,newboolean) {
+      this.state.noMoreFlag = newboolean;
     },
 
   },

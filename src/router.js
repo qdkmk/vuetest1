@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import sns from './components/sns.vue'
 
 Vue.use(Router)
 
@@ -16,6 +15,11 @@ export default new Router({
     },
     {
       path: '/keyword/:keyword',
+      name:'keyword',
+      component: Home
+    },
+    {
+      path: '/keyword/',
       component: Home
     },
     {
