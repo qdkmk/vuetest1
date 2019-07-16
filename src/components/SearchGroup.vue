@@ -90,7 +90,9 @@ export default {
         }
         const obj = {
           question: question.innerHTML.slice(0, 200) + dotquestion,
+          questionAll: question.innerHTML,
           answer: answer.innerHTML.slice(0, 200) + dotanswer,
+          answerAll: answer.innerHTML,
           id: id.innerHTML,
         };
         this.refqas.push(obj)
@@ -303,13 +305,13 @@ export default {
     font-size: 3rem;
   }
 
-  .SearchGroup .random-button,
-  .more-button {
+  .SearchGroup .random-button{
     margin: 10px auto;
     font-size: 3rem;
     padding: 1rem 1rem;
     width: 70%;
   }
+
 
   .SearchGroup .or {
     font-size: 2rem;

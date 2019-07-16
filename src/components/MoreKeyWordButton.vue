@@ -64,7 +64,9 @@ export default {
         }
         const obj = {
           question: question.innerHTML.slice(0, 200) + dotquestion,
+          questionAll: question.innerHTML,
           answer: answer.innerHTML.slice(0, 200) + dotanswer,
+          answerAll: answer.innerHTML,
           id: id.innerHTML,
         };
         this.refqas.push(obj)
@@ -117,15 +119,16 @@ export default {
   box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
   -webkit-tap-highlight-color: transparent;
   transition: .3s ease-out;
+  width: 90%;
 }
 
 
 @media screen and (min-width: 768px) {
   .more-button {
     margin: 10px auto;
-    font-size: 3rem;
+    font-size: 2rem;
     padding: 1rem 1rem;
-    width: 70%;
+    width: 40%;;
   }
 
 }

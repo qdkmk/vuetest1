@@ -1,32 +1,52 @@
 <template>
 <div class="resultswrapper" id="resultswrapper">
   <div class="result" v-for="(refqa,index) in sharedState.message" v-bind:key='index'>
-    <router-link :to="{ name: 'detail', params: { sysid: refqa.id }}">
-      <div class="result-question">
-        <p v-html="refqa.question"></p>
-      </div>
-      <div class="result-answer">
-        <p v-html="refqa.answer"></p>
-      </div>
-    </router-link>
+
+    <div  v-on:click="toggleDetail(index)" >
+    <div class="result-question">
+      <p v-html="refqa.question"></p>
+    </div>
+    <div class="result-answer">
+      <p v-html="refqa.answer" ></p>
+    </div>
+</div>
+
   </div>
   <div class="no-more" v-show="sharedState.noMoreFlag">
     <p>検索結果は以上です。</p>
   </div>
+  <Modal  @close="toggleDetail(modalIndex)" class="modal" v-if="isDetail[modalIndex]" :question=sharedState.message[modalIndex].questionAll :answer=sharedState.message[modalIndex].answerAll :id=sharedState.message[modalIndex].id />
 </div>
 </template>
 
 <script>
+import Modal from "./Modal.vue"
 //storeのデータを参照して結果を表示する
 export default {
+  components: { Modal },
   name: 'Result',
   data() {
     return {
       sharedState: this.$store.state,
+      isDetail: [],
+      modalIndex:0
     }
   },
-  props: {},
-}
+  computed: {
+    attrs: function() {
+      return function(index,isDetail) {
+        return this.isDetail[index]? this.sharedState.message[index].answerAll: this.sharedState.message[index].answer
+        }
+      }
+    },
+    methods:{
+      toggleDetail:function(index){
+        this.$set(this.isDetail, index, !this.isDetail[index]);
+        this.modalIndex = index;
+      }
+    }
+  }
+
 </script>
 
 <style scoped>
@@ -71,7 +91,8 @@ export default {
   line-height: 1.4rem;
   text-align: justify;
 }
-.no-more{
+
+.no-more {
   display: block;
   width: 100%;
 }
