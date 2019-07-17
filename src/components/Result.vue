@@ -15,7 +15,7 @@
   <div class="no-more" v-show="sharedState.noMoreFlag">
     <p>検索結果は以上です。</p>
   </div>
-  <Modal  @close="toggleDetail(modalIndex)" class="modal" v-if="isDetail[modalIndex]" :question=sharedState.message[modalIndex].questionAll :answer=sharedState.message[modalIndex].answerAll :id=sharedState.message[modalIndex].id />
+  <Modal  @close="toggleDetail(modalIndex)" class="modal" v-if="isDetail[modalIndex]" :question=sharedState.message[modalIndex].questionAll :answer=sharedState.message[modalIndex].answerAll :id=sharedState.message[modalIndex].id :num=modalIndex />
 </div>
 </template>
 

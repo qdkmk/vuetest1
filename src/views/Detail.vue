@@ -42,30 +42,29 @@
 
 
 
-    <div class="article-detail" v-for="(refqa,index) in refqas" v-bind:key='index'>
+    <div class="article-detail">
       <h3 id="question">質問</h3>
-      <p v-html="refqa.question"></p>
+      <p v-html="question"></p>
       <h3 id="answer">回答</h3>
-      <p v-html="refqa.answer"></p>
+      <p v-html="answer"></p>
       <h3 id="process">回答プロセス</h3>
-      <p v-html="refqa.ansproc"></p>
+      <p v-html="ansproc"></p>
       <h3 id="preres">事前調査事項</h3>
-      <p v-html="refqa.preres"></p>
+      <p v-html="preres"></p>
       <h3 id="bibldesc">参考資料</h3>
-      <p v-html="refqa.bibldesc"></p>
+      <p v-html="bibldesc"></p>
       <h3 id="libname">提供館</h3>
-      <p v-html="refqa.libname"></p>
+      <p v-html="libname"></p>
       <h3 id="restype">調査種別</h3>
-      <p v-html="refqa.restype"></p>
+      <p v-html="restype"></p>
       <h3 id="crtdate">事例作成日</h3>
-      <p v-html="refqa.crtdate"></p>
+      <p v-html="crtdate"></p>
       <h3 id="originalurl">元記事URL</h3>
-      <a v-bind:href="refqa.url">
-        <p v-html="refqa.url"></p>
+      <a v-bind:href="url">
+      <p v-html="url"></p>
       </a>
       <h3 id="keyword">キーワード</h3>
-      <span v-for="keyword in refqa.keywords" class="tag" v-bind:key=keyword>
-
+      <span v-for="keyword in keywords" class="tag" v-bind:key=keyword>
         <a v-bind:href="'https://testreftika.web.app/keyword/' + keyword">{{keyword}}</a>
         <!--<a v-bind:href="'http://localhost:8081/keyword/' + keyword">{{keyword}}</a>-->
       </span>
@@ -77,6 +76,7 @@
   <div id="gotop">
     <a href="#" id="return-top"><i class="fa fa-chevron-up"></i></a>
   </div>
+  <img v-show="loading" class="loader" src="../assets/tail-spin.svg"></img>
 </div>
 </template>
 
@@ -85,43 +85,71 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      refqas: []
+      refqas: [],
+      loading:false,
+      sharedState: this.$store.state,
+      question : "",
+      answer : "",
+      ansproc : "",
+      preres : "",
+      bibldesc : "",
+      libname : "",
+      restype : "",
+      crtdate : "",
+      keywords : "",
+      url : ""
     }
   },
   created() {
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://platform.twitter.com/widgets.js')
     document.head.appendChild(recaptchaScript)
-  },
-  methods:{
-    reflesh: function() {
-      this.$store.commit("clearMessageAction");
+
+    //Home.vueから（＝Modal.vueから）のアクセスでない場合は、get関数でデータ取得
+    //Home.vueから（＝Modal.vueから）のアクセスの場合はstoreのデータを使用する。
+    if (this.$store.state.message[this.$route.params.num] === undefined) {
+      this.get();
+    } else {
+      this.question= this.$store.state.message[this.$route.params.num].questionAll,
+      this.answer= this.$store.state.message[this.$route.params.num].answerAll,
+      this.ansproc= this.$store.state.message[this.$route.params.num].ansproc,
+      this.preres= this.$store.state.message[this.$route.params.num].preres,
+      this.bibldesc= this.$store.state.message[this.$route.params.num].bibldesc,
+      this.libname= this.$store.state.message[this.$route.params.num].libname,
+      this.restype= this.$store.state.message[this.$route.params.num].restype,
+      this.crtdate= this.$store.state.message[this.$route.params.num].crtdate,
+      this.keywords= this.$store.state.message[this.$route.params.num].keywords,
+      this.url= this.$store.state.message[this.$route.params.num].url
     }
   },
-  mounted() {
-    axios.get("https://falmy.herokuapp.com/detail?sysid=" + this.$route.params.sysid)
-      .then(response => {
-        const oParser = new DOMParser();
-        const oDOM = oParser.parseFromString(response.data, "application/xml");
-        const results = oDOM.getElementsByTagName('result');
-        //データがない場合もある項目のエスケープ用
-        let ansprocElm = oDOM.createElement("ans-proc");
-        ansprocElm.innerHTML = ("not found");
-        let preresElm = oDOM.createElement("pre-res");
-        preresElm.innerHTML = ("not found");
-        let bibldescElm = oDOM.createElement("bibl-desc");
-        bibldescElm.innerHTML = ("not found");
-        let libnameElm = oDOM.createElement("lib-name");
-        libnameElm.innerHTML = ("not found");
-        let restypeElm = oDOM.createElement("res-type");
-        restypeElm.innerHTML = ("not found");
-        let crtdateElm = oDOM.createElement("crt-date");
-        crtdateElm.innerHTML = ("00000000");
-        let keywordsElm = oDOM.createElement("keyword");
-        keywordsElm.innerHTML = ("");
+  methods: {
+    reflesh: function() {
+      this.$store.commit("clearMessageAction");
+    },
+    get: function() {
+      this.loading = true;
+      axios.get("https://falmy.herokuapp.com/detail?sysid=" + this.$route.params.sysid)
+        .then(response => {
+          const oParser = new DOMParser();
+          const oDOM = oParser.parseFromString(response.data, "application/xml");
+          const results = oDOM.getElementsByTagName('result');
+          //データがない場合もある項目のエスケープ用
+          let ansprocElm = oDOM.createElement("ans-proc");
+          ansprocElm.innerHTML = ("not found");
+          let preresElm = oDOM.createElement("pre-res");
+          preresElm.innerHTML = ("not found");
+          let bibldescElm = oDOM.createElement("bibl-desc");
+          bibldescElm.innerHTML = ("not found");
+          let libnameElm = oDOM.createElement("lib-name");
+          libnameElm.innerHTML = ("not found");
+          let restypeElm = oDOM.createElement("res-type");
+          restypeElm.innerHTML = ("not found");
+          let crtdateElm = oDOM.createElement("crt-date");
+          crtdateElm.innerHTML = ("00000000");
+          let keywordsElm = oDOM.createElement("keyword");
+          keywordsElm.innerHTML = ("");
 
-
-        for (const result of results) {
+          for (const result of results) {
           const question = result.getElementsByTagName("reference")[0].getElementsByTagName("question")[0];
           const answer = result.getElementsByTagName("reference")[0].getElementsByTagName("answer")[0];
           const ansproc = result.getElementsByTagName("reference")[0].getElementsByTagName("ans-proc")[0] || ansprocElm;
@@ -130,33 +158,36 @@ export default {
           const libname = result.getElementsByTagName("reference")[0].getElementsByTagName("lib-name")[0] || libnameElm;
           const restype = result.getElementsByTagName("reference")[0].getElementsByTagName("res-type")[0] || restypeElm;
           const crtdate = result.getElementsByTagName("reference")[0].getElementsByTagName("crt-date")[0] || crtdateElm;
-          const keywords = result.getElementsByTagName("reference")[0].getElementsByTagName("keyword")|| keywordsElm;
+          const keywords = result.getElementsByTagName("reference")[0].getElementsByTagName("keyword") || keywordsElm;
           const keywordsArray = Array.prototype.slice.call(keywords);
           const url = result.getElementsByTagName("reference")[0].getElementsByTagName("url")[0];
-
-          const obj = {
-            question: question.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            answer: answer.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            ansproc: ansproc.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            preres: preres.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            bibldesc: bibldesc.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            libname: libname.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            restype: restype.innerHTML.replace(/\n/g, "<BR>") + '\n',
-            crtdate: crtdate.innerHTML.slice(0, 4) + "/" + crtdate.innerHTML.slice(4, 6) + "/" + crtdate.innerHTML.slice(6) + '\n',
-            keywords: keywordsArray.map(item => item.innerHTML),
-            url: url.innerHTML.replace(/&amp;/g, '&') + '\n',
-          };
-          this.refqas.push(obj)
-        }
-      })
-      .catch(error => {
-        this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。', {
-          position: "top-center",
-          duration: 10000
+          this.question = question.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.answer = answer.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.ansproc = ansproc.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.preres = preres.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.bibldesc = bibldesc.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.libname = libname.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.restype = restype.innerHTML.replace(/\n/g, "<BR>") + '\n',
+            this.crtdate = crtdate.innerHTML.slice(0, 4) + "/" + crtdate.innerHTML.slice(4, 6) + "/" + crtdate.innerHTML.slice(6) + '\n',
+            this.keywords = keywordsArray.map(item => item.innerHTML),
+            this.url = url.innerHTML.replace(/&amp;/g, '&') + '\n'
+          }
+        })
+        .catch(error => {
+          this.$toasted.show('データ取得に失敗しました。時間を置いて再度お試しください。', {
+            position: "top-center",
+            duration: 10000
+          });
+        })
+        .finally(()=>{
+          this.loading = false;
         });
-      })
+    }
+  },
+  mounted() {
 
-  }
+
+}
 }
 </script>
 
@@ -221,17 +252,32 @@ export default {
   width: 50px;
   z-index: 80;
 }
-.article-detail-container .article-detail .tag{
+
+.article-detail-container .article-detail .tag {
   display: inline-block;
   margin: 5px;
   padding: 5px;
   background-color: #f78200;
   border-radius: 3px;
 }
-.article-detail-container .article-detail .tag a{
+
+.article-detail-container .article-detail .tag a {
   color: #fff;
 }
-
+/*
+loader
+*/
+.loader {
+  display: block;
+  width: 15%;
+  height: 15%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%);
+  transform: translateX(-50%);
+  z-index: 10;
+}
 @media screen and (min-width: 768px) {
   .detail-tweet-sp {
     display: none;

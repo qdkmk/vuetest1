@@ -49,11 +49,37 @@ export default {
       const oParser = new DOMParser();
       const oDOM = oParser.parseFromString(response.data, "application/xml");
       const results = oDOM.getElementsByTagName('result');
+
+      //データがない場合もある項目のエスケープ用
+      let ansprocElm = oDOM.createElement("ans-proc");
+      ansprocElm.innerHTML = ("not found");
+      let preresElm = oDOM.createElement("pre-res");
+      preresElm.innerHTML = ("not found");
+      let bibldescElm = oDOM.createElement("bibl-desc");
+      bibldescElm.innerHTML = ("not found");
+      let libnameElm = oDOM.createElement("lib-name");
+      libnameElm.innerHTML = ("not found");
+      let restypeElm = oDOM.createElement("res-type");
+      restypeElm.innerHTML = ("not found");
+      let crtdateElm = oDOM.createElement("crt-date");
+      crtdateElm.innerHTML = ("00000000");
+      let keywordsElm = oDOM.createElement("keyword");
+      keywordsElm.innerHTML = ("");
+
       for (const result of results) {
         const question = result.getElementsByTagName("reference")[0].getElementsByTagName("question")[0];
         const answer = result.getElementsByTagName("reference")[0].getElementsByTagName("answer")[0];
         const id = result.getElementsByTagName("reference")[0].getElementsByTagName("sys-id")[0];
-        //200文字以上のコンテンツはトップ画面では省略する。
+
+        const ansproc = result.getElementsByTagName("reference")[0].getElementsByTagName("ans-proc")[0] || ansprocElm;
+        const preres = result.getElementsByTagName("reference")[0].getElementsByTagName("pre-res")[0] || preresElm;
+        const bibldesc = result.getElementsByTagName("reference")[0].getElementsByTagName("bibl-desc")[0] || bibldescElm;
+        const libname = result.getElementsByTagName("reference")[0].getElementsByTagName("lib-name")[0] || libnameElm;
+        const restype = result.getElementsByTagName("reference")[0].getElementsByTagName("res-type")[0] || restypeElm;
+        const crtdate = result.getElementsByTagName("reference")[0].getElementsByTagName("crt-date")[0] || crtdateElm;
+        const keywords = result.getElementsByTagName("reference")[0].getElementsByTagName("keyword")|| keywordsElm;
+        const keywordsArray = Array.prototype.slice.call(keywords);
+        const url = result.getElementsByTagName("reference")[0].getElementsByTagName("url")[0];
         let dotquestion = "";
         let dotanswer = "";
         if (question.innerHTML.length > 200) {
@@ -68,6 +94,14 @@ export default {
           answer: answer.innerHTML.slice(0, 200) + dotanswer,
           answerAll: answer.innerHTML,
           id: id.innerHTML,
+          ansproc : ansproc.innerHTML.replace(/\n/g, "<BR>") + '\n',
+          preres: preres.innerHTML.replace(/\n/g, "<BR>") + '\n',
+          bibldesc: bibldesc.innerHTML.replace(/\n/g, "<BR>") + '\n',
+          libname: libname.innerHTML.replace(/\n/g, "<BR>") + '\n',
+          restype: restype.innerHTML.replace(/\n/g, "<BR>") + '\n',
+          crtdate: crtdate.innerHTML.slice(0, 4) + "/" + crtdate.innerHTML.slice(4, 6) + "/" + crtdate.innerHTML.slice(6) + '\n',
+          keywords: keywordsArray.map(item => item.innerHTML),
+          url: url.innerHTML.replace(/&amp;/g, '&') + '\n',
         };
         this.refqas.push(obj)
       }

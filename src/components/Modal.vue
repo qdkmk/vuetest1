@@ -3,11 +3,11 @@
   <div class="modal modal-overlay" @click="$emit('close')"  >
     <div class="modal-window">
       <div class="modal-content">
-        <p class="question">{{question}}</p>
+        <p v-html="question"　class="question"></p>
         <hr>
-        <p class="answer">{{answer}}</p>
+        <p v-html="answer"　class="answer"></p>
       </div>
-      <router-link :to="{ name: 'detail', params:{sysid:this.id} }">
+      <router-link :to="{ name: 'detail', params:{num:this.num,sysid:id} }">
         <button type="button" class="button">詳細を見る</button>
         </router-link>
     </div>
@@ -24,7 +24,8 @@ export default {
   props: {
     question:String,
     answer:String,
-    id:String
+    id:String,
+    num:Number
   },
 }
 
