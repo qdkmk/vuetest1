@@ -90,9 +90,9 @@ export default {
         }
         const obj = {
           question: question.innerHTML.slice(0, 200) + dotquestion,
-          questionAll: question.innerHTML,
+          questionAll: question.innerHTML.replace(/\n/g, "<BR>") + '\n',
           answer: answer.innerHTML.slice(0, 200) + dotanswer,
-          answerAll: answer.innerHTML,
+          answerAll: answer.innerHTML.replace(/\n/g, "<BR>") + '\n',
           id: id.innerHTML,
           ansproc : ansproc.innerHTML.replace(/\n/g, "<BR>") + '\n',
           preres: preres.innerHTML.replace(/\n/g, "<BR>") + '\n',
